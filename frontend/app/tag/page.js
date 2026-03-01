@@ -5,8 +5,8 @@ export const metadata = {
   title: "Tags",
 };
 
-export default function TagPage() {
-  const tags = getAllTags();
+export default async function TagPage() {
+  const tags = await getAllTags();
 
   return (
     <div className="px-4 flex-1 flex flex-col">

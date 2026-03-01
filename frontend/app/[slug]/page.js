@@ -1,11 +1,6 @@
-import { getAllPageSlugs, getPageBySlug } from "@/lib/pages";
+import { getPageBySlug } from "@/lib/pages";
 import { notFound } from "next/navigation";
 import siteConfig from "@/lib/config";
-
-export async function generateStaticParams() {
-  const slugs = getAllPageSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;

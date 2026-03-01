@@ -1,10 +1,5 @@
-import { getAllCategories, getPostsByCategory } from "@/lib/posts";
+import { getPostsByCategory } from "@/lib/posts";
 import ArchiveList from "@/components/ArchiveList";
-
-export async function generateStaticParams() {
-  const categories = getAllCategories();
-  return categories.map((c) => ({ category: c.name }));
-}
 
 export async function generateMetadata({ params }) {
   const { category } = await params;
@@ -14,7 +9,7 @@ export async function generateMetadata({ params }) {
 export default async function SingleCategoryPage({ params }) {
   const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
-  const posts = getPostsByCategory(decodedCategory);
+  const posts = await getPostsByCategory(decodedCategory);
 
   return (
     <div className="px-4 flex-1 flex flex-col">

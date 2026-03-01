@@ -1,12 +1,7 @@
-import { getAllPosts, getPostBySlug, getAdjacentPosts } from "@/lib/posts";
+import { getPostBySlug, getAdjacentPosts } from "@/lib/posts";
 import PostNav from "@/components/PostNav";
 import TableOfContents from "@/components/TableOfContents";
 import siteConfig from "@/lib/config";
-
-export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({ slug: post.slug }));
-}
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -31,14 +26,14 @@ function formatTime(dateStr) {
 export default async function PostPage({ params }) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  const { prev, next } = getAdjacentPosts(slug);
+  const { prev, next } = await getAdjacentPosts(slug);
 
   return (
     <div className="px-4 flex-1 flex flex-col">
       {siteConfig.post_toc_enable && <TableOfContents />}
 
       <article className="post-wrap relative w-full max-w-[780px] mx-auto pt-8 flex-1">
-        {/* Post Header */}
+        {/* 文章标题 */}
         <header>
           <h1 className="text-3xl leading-relaxed font-semibold">{post.title}</h1>
           {siteConfig.post_meta_enable && (
@@ -71,13 +66,13 @@ export default async function PostPage({ params }) {
           )}
         </header>
 
-        {/* Post Content */}
+        {/* 文章内容 */}
         <div
           className="post-content"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* Copyright */}
+        {/* 版权信息 */}
         {siteConfig.post_copyright_enable && (
           <section className="post-copyright">
             {siteConfig.post_copyright_author_enable && (
@@ -109,7 +104,7 @@ export default async function PostPage({ params }) {
           </section>
         )}
 
-        {/* Tags */}
+        {/* 标签 */}
         <section className="flex justify-between py-4">
           <div>
             <span>Tag(s): </span>
@@ -125,12 +120,11 @@ export default async function PostPage({ params }) {
             ) : null}
           </div>
           <div>
-            <button onClick={null} className="hidden">back</button>
             <a href="/" className="text-[--post-link] hover:text-[--post-link-hover]">home</a>
           </div>
         </section>
 
-        {/* Post Navigation */}
+        {/* 上一篇/下一篇 */}
         <PostNav prev={prev} next={next} />
       </article>
     </div>

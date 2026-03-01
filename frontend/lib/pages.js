@@ -1,38 +1,19 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import rehypeStringify from "rehype-stringify";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-const pagesDirectory = path.join(process.cwd(), "content", "pages");
+async function fetchJson(path) {
+  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
+  if (!res.ok) {
+    if (res.status === 404) return null;
+    throw new Error(`API error: ${res.status} ${path}`);
+  }
+  return res.json();
+}
 
-export function getAllPageSlugs() {
-  if (!fs.existsSync(pagesDirectory)) return [];
-  return fs
-    .readdirSync(pagesDirectory)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => f.replace(/\.md$/, ""));
+export async function getAllPageSlugs() {
+  const data = await fetchJson("/api/pages");
+  return data?.slugs || [];
 }
 
 export async function getPageBySlug(slug) {
-  const fullPath = path.join(pagesDirectory, `${slug}.md`);
-  if (!fs.existsSync(fullPath)) return null;
-
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(fileContents);
-
-  const processor = unified()
-    .use(remarkParse)
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeStringify, { allowDangerousHtml: true });
-
-  const result = await processor.process(content);
-
-  return {
-    slug,
-    title: data.title || slug,
-    content: result.toString(),
-  };
+  return fetchJson(`/api/pages/${encodeURIComponent(slug)}`);
 }

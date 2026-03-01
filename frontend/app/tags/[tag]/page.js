@@ -1,10 +1,5 @@
-import { getAllTags, getPostsByTag } from "@/lib/posts";
+import { getPostsByTag } from "@/lib/posts";
 import ArchiveList from "@/components/ArchiveList";
-
-export async function generateStaticParams() {
-  const tags = getAllTags();
-  return tags.map((t) => ({ tag: t.name }));
-}
 
 export async function generateMetadata({ params }) {
   const { tag } = await params;
@@ -14,7 +9,7 @@ export async function generateMetadata({ params }) {
 export default async function SingleTagPage({ params }) {
   const { tag } = await params;
   const decodedTag = decodeURIComponent(tag);
-  const posts = getPostsByTag(decodedTag);
+  const posts = await getPostsByTag(decodedTag);
 
   return (
     <div className="px-4 flex-1 flex flex-col">

@@ -5,8 +5,8 @@ export const metadata = {
   title: "Archives",
 };
 
-export default function ArchivesPage() {
-  const posts = getAllPosts();
+export default async function ArchivesPage() {
+  const posts = await getAllPosts();
 
   return (
     <div className="px-4 flex-1 flex flex-col">

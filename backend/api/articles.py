@@ -1,0 +1,55 @@
+from flask import Blueprint, jsonify, request
+
+from crud import articles as crud
+
+bp = Blueprint("articles", __name__, url_prefix="/api/admin/articles")
+
+
+@bp.get("/")
+def list_articles():
+    category_id = request.args.get("category_id", type=int)
+    return jsonify(crud.get_all(category_id=category_id))
+
+
+@bp.get("/<int:article_id>")
+def get_article(article_id):
+    item = crud.get_by_id(article_id)
+    if not item:
+        return jsonify({"error": "文章不存在"}), 404
+    return jsonify(item)
+
+
+@bp.post("/")
+def create_article():
+    data = request.get_json(silent=True) or {}
+    title = data.get("title")
+    content = data.get("content")
+    if not title or content is None:
+        return jsonify({"error": "title 和 content 为必填项"}), 400
+    optional = {
+        k: v for k, v in data.items()
+        if k in ("url", "category_id") and v is not None
+    }
+    item = crud.create(title=title, content=content, **optional)
+    return jsonify(item), 201
+
+
+@bp.put("/<int:article_id>")
+def update_article(article_id):
+    data = request.get_json(silent=True) or {}
+    allowed = {
+        k: v for k, v in data.items()
+        if k in ("title", "content", "url", "category_id")
+    }
+    if not allowed:
+        return jsonify({"error": "无有效更新字段"}), 400
+    item = crud.update(article_id, **allowed)
+    if not item:
+        return jsonify({"error": "文章不存在"}), 404
+    return jsonify(item)
+
+
+@bp.delete("/<int:article_id>")
+def delete_article(article_id):
+    crud.delete(article_id)
+    return "", 204

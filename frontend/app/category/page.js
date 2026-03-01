@@ -5,8 +5,8 @@ export const metadata = {
   title: "Categories",
 };
 
-export default function CategoryPage() {
-  const categories = getAllCategories();
+export default async function CategoryPage() {
+  const categories = await getAllCategories();
 
   return (
     <div className="px-4 flex-1 flex flex-col">
