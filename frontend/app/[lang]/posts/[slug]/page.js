@@ -1,4 +1,5 @@
 import { getPostBySlug, getAdjacentPosts } from "@/lib/posts";
+import { getDictionary } from "@/lib/dictionaries";
 import PostNav from "@/components/PostNav";
 import TableOfContents from "@/components/TableOfContents";
 import siteConfig from "@/lib/config";
@@ -9,12 +10,8 @@ export async function generateMetadata({ params }) {
   return { title: `${post.title} | ${siteConfig.title}` };
 }
 
-function formatDate(dateStr) {
+function formatDate(dateStr, months) {
   const d = new Date(dateStr);
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
@@ -24,37 +21,37 @@ function formatTime(dateStr) {
 }
 
 export default async function PostPage({ params }) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
+  const dict = await getDictionary(lang);
   const post = await getPostBySlug(slug);
   const { prev, next } = await getAdjacentPosts(slug);
 
   return (
     <div className="px-4 flex-1 flex flex-col">
-      {siteConfig.post_toc_enable && <TableOfContents />}
+      {siteConfig.post_toc_enable && <TableOfContents dict={dict} />}
 
       <article className="post-wrap relative w-full max-w-[780px] mx-auto pt-8 flex-1">
-        {/* 文章标题 */}
         <header>
           <h1 className="text-3xl leading-relaxed font-semibold">{post.title}</h1>
           {siteConfig.post_meta_enable && (
             <div className="text-[rgba(85,85,85,0.53)] dark:text-[--text-secondary] text-sm mt-1">
               {siteConfig.post_author_enable && siteConfig.author && (
                 <span>
-                  Author: <a href="/" className="text-[--post-link] hover:text-[--post-link-hover]">{siteConfig.author}</a>
+                  {dict.post.author}<a href={`/${lang}`} className="text-[--post-link] hover:text-[--post-link-hover]">{siteConfig.author}</a>
                 </span>
               )}
               {post.date && siteConfig.post_date_enable && (
                 <span className="ml-4">
-                  Date: <span>{formatDate(post.date)}&nbsp;&nbsp;{formatTime(post.date)}</span>
+                  {dict.post.date}<span>{formatDate(post.date, dict.months)}&nbsp;&nbsp;{formatTime(post.date)}</span>
                 </span>
               )}
               {post.categories.length > 0 && siteConfig.post_category_enable && (
                 <span className="ml-4">
-                  Category:{" "}
+                  {dict.post.category}
                   {post.categories.map((cat, i) => (
                     <a
                       key={cat}
-                      href={`/categories/${encodeURIComponent(cat)}`}
+                      href={`/${lang}/categories/${encodeURIComponent(cat)}`}
                       className="text-[--post-link] hover:text-[--post-link-hover]"
                     >
                       {cat}{i < post.categories.length - 1 ? ", " : ""}
@@ -66,52 +63,49 @@ export default async function PostPage({ params }) {
           )}
         </header>
 
-        {/* 文章内容 */}
         <div
           className="post-content"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* 版权信息 */}
         {siteConfig.post_copyright_enable && (
           <section className="post-copyright">
             {siteConfig.post_copyright_author_enable && (
               <p className="my-1">
-                <span className="font-semibold">Author: </span>
+                <span className="font-semibold">{dict.post.author}</span>
                 <span>{siteConfig.author}</span>
               </p>
             )}
             {siteConfig.post_copyright_permalink_enable && (
               <p className="my-1">
-                <span className="font-semibold">Permalink: </span>
+                <span className="font-semibold">{dict.post.permalink}</span>
                 <span>
-                  <a href={`/posts/${slug}`}>{`/posts/${slug}`}</a>
+                  <a href={`/${lang}/posts/${slug}`}>{`/posts/${slug}`}</a>
                 </span>
               </p>
             )}
             {siteConfig.post_copyright_license_enable && (
               <p className="my-1">
-                <span className="font-semibold">License: </span>
+                <span className="font-semibold">{dict.post.license}</span>
                 <span dangerouslySetInnerHTML={{ __html: siteConfig.post_copyright_license_text }} />
               </p>
             )}
             {siteConfig.post_copyright_slogan_enable && (
               <p className="my-1">
-                <span className="font-semibold">Slogan: </span>
+                <span className="font-semibold">{dict.post.slogan}</span>
                 <span dangerouslySetInnerHTML={{ __html: siteConfig.post_copyright_slogan_text }} />
               </p>
             )}
           </section>
         )}
 
-        {/* 标签 */}
         <section className="flex justify-between py-4">
           <div>
-            <span>Tag(s): </span>
+            <span>{dict.post.tags}</span>
             {post.tags.length > 0 ? (
               post.tags.map((tag, i) => (
                 <span key={tag}>
-                  <a href={`/tags/${encodeURIComponent(tag)}`} className="text-[--post-link] hover:text-[--post-link-hover]">
+                  <a href={`/${lang}/tags/${encodeURIComponent(tag)}`} className="text-[--post-link] hover:text-[--post-link-hover]">
                     # {tag}
                   </a>
                   {i < post.tags.length - 1 ? " / " : ""}
@@ -120,12 +114,11 @@ export default async function PostPage({ params }) {
             ) : null}
           </div>
           <div>
-            <a href="/" className="text-[--post-link] hover:text-[--post-link-hover]">home</a>
+            <a href={`/${lang}`} className="text-[--post-link] hover:text-[--post-link-hover]">{dict.post.home}</a>
           </div>
         </section>
 
-        {/* 上一篇/下一篇 */}
-        <PostNav prev={prev} next={next} />
+        <PostNav prev={prev} next={next} lang={lang} />
       </article>
     </div>
   );

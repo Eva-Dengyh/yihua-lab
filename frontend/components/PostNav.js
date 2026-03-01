@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-export default function PostNav({ prev, next }) {
+export default function PostNav({ prev, next, lang }) {
   return (
     <section className="post-nav py-4 overflow-hidden">
       {prev && (
         <Link
-          href={`/posts/${prev.slug}`}
+          href={`/${lang}/posts/${prev.slug}`}
           className="float-left font-semibold text-base transition-transform duration-300 hover:-translate-x-1"
         >
           <span className="mr-2 font-bold">&lt;</span>
@@ -14,7 +14,7 @@ export default function PostNav({ prev, next }) {
       )}
       {next && (
         <Link
-          href={`/posts/${next.slug}`}
+          href={`/${lang}/posts/${next.slug}`}
           className="float-right font-semibold text-base transition-transform duration-300 hover:translate-x-1"
         >
           {next.title}

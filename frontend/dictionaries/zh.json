@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "posts": "文章",
+    "categories": "分类",
+    "tags": "标签",
+    "about": "关于我"
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色"
+  },
+  "post": {
+    "author": "作者：",
+    "date": "日期：",
+    "category": "分类：",
+    "tags": "标签：",
+    "permalink": "永久链接：",
+    "license": "许可协议：",
+    "slogan": "寄语：",
+    "home": "首页"
+  },
+  "common": {
+    "backToTop": "回到顶部",
+    "goToBottom": "去底部",
+    "more": "更多 >>",
+    "archives": "归档",
+    "categories": "分类",
+    "tags": "标签",
+    "tagCloud": "标签云",
+    "category": "分类",
+    "tag": "标签"
+  },
+  "profile": {
+    "nickname": "小邓",
+    "navname": "小邓的博客",
+    "title": "小邓的博客",
+    "description": "一个热爱探索前沿技术的终身学习者，<br>专注于 AI 工程实践与持续创新。"
+  },
+  "links": {
+    "WeChat": "微信公众号",
+    "RedBook": "小红书",
+    "Github": "Github"
+  },
+  "footer": {
+    "rights": "版权所有"
+  },
+  "months": [
+    "一月", "二月", "三月", "四月", "五月", "六月",
+    "七月", "八月", "九月", "十月", "十一月", "十二月"
+  ]
+}

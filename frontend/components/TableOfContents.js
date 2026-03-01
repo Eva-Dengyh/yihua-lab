@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function TableOfContents() {
+export default function TableOfContents({ dict }) {
   const [headings, setHeadings] = useState([]);
   const [activeId, setActiveId] = useState("");
 
@@ -64,13 +64,13 @@ export default function TableOfContents() {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="block my-1.5 text-gray-400 cursor-pointer hover:text-gray-600"
         >
-          Back to top
+          {dict.common.backToTop}
         </button>
         <button
           onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })}
           className="block my-1.5 text-gray-400 cursor-pointer hover:text-gray-600"
         >
-          Go to bottom
+          {dict.common.goToBottom}
         </button>
       </div>
     </div>

@@ -1,31 +1,29 @@
 const siteConfig = {
   // Header
-  navname: "Bentham's Blog",
+  navname: "Eva's Blog",
 
-  // Navigator items
+  // Navigator items (路由定义，文本由字典文件提供)
   nav: {
-    Posts: "/archives",
-    Categories: "/category",
-    Tags: "/tag",
-    About: "/about",
+    posts: "/archives",
+    categories: "/category",
+    tags: "/tag",
+    about: "/about",
   },
 
   // Favicon
   favicon: "/favicon.ico",
 
   // Profile
-  nickname: "Jeremy Bentham",
+  nickname: "Eva",
   description:
-    'Lorem ipsum dolor sit amet, **consectetur adipiscing elit.** <br>Fusce eget urna vitae velit *eleifend interdum at ac* nisi.',
+    'A lifelong learner passionate about exploring cutting-edge technologies, <br>focusing on AI engineering practice and continuous innovation.',
   avatar: "/images/avatar.jpeg",
 
   // Social links
   links: {
-    Blog: "/archives",
-    ZhiHu: "https://www.zhihu.com/people/sirice",
-    Instagram: "",
-    Reddit: "",
-    Github: "https://github.com/Siricee",
+    WeChat: "https://mp.weixin.qq.com/s/vQjVkf-hg1JCVtVMFltYoA?clicktime=1772375520&enterid=1772375520&scene=126&sessionid=1772375487&subscene=91",
+    RedBook: "https://www.xiaohongshu.com/user/profile/6534a8c900000000060047c5",
+    Github: "https://github.com/Eva-Dengyh",
   },
   links_text_enable: false,
   links_icon_enable: true,
@@ -57,8 +55,8 @@ const siteConfig = {
   date_format: "MMMM D, YYYY",
 
   // Site info
-  author: "Jeremy Bentham",
-  title: "Bentham's Blog",
+  author: "Eva",
+  title: "Eva's Blog",
 };
 
 export default siteConfig;

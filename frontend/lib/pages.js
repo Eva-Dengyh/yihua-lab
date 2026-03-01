@@ -1,19 +1,24 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
+import { marked } from "marked";
+import { defaultLocale } from "@/i18n-config";
 
-async function fetchJson(path) {
-  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
-  if (!res.ok) {
-    if (res.status === 404) return null;
-    throw new Error(`API error: ${res.status} ${path}`);
-  }
-  return res.json();
-}
+const PAGES_DIR = path.join(process.cwd(), "content/pages");
 
-export async function getAllPageSlugs() {
-  const data = await fetchJson("/api/pages");
-  return data?.slugs || [];
-}
+export async function getPageBySlug(slug, lang = defaultLocale) {
+  // 优先查找语言特定文件（如 about.zh.md），回退到通用文件（about.md）
+  const langFile = path.join(PAGES_DIR, `${slug}.${lang}.md`);
+  const defaultFile = path.join(PAGES_DIR, `${slug}.md`);
+  const filePath = fs.existsSync(langFile) ? langFile : defaultFile;
 
-export async function getPageBySlug(slug) {
-  return fetchJson(`/api/pages/${encodeURIComponent(slug)}`);
+  if (!fs.existsSync(filePath)) return null;
+
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { data, content } = matter(raw);
+
+  return {
+    title: data.title || slug,
+    content: marked(content),
+  };
 }

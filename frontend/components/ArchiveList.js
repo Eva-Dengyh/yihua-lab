@@ -1,15 +1,11 @@
 import Link from "next/link";
 
-function formatDate(dateStr) {
+function formatDate(dateStr, months) {
   const d = new Date(dateStr);
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function ArchiveList({ posts }) {
+export default function ArchiveList({ posts, lang, dict }) {
   const grouped = {};
   posts.forEach((post) => {
     const year = new Date(post.date).getFullYear();
@@ -27,13 +23,13 @@ export default function ArchiveList({ posts }) {
           {grouped[year].map((post) => (
             <article key={post.slug} className="ml-8 py-1">
               <Link
-                href={`/posts/${post.slug}`}
+                href={`/${lang}/posts/${post.slug}`}
                 className="inline-block no-underline whitespace-nowrap overflow-hidden hover:text-[--link-hover] hover:bg-transparent transition-colors"
               >
                 {post.title}
               </Link>
               <span className="float-right text-right text-[--text-secondary] hidden sm:inline">
-                {formatDate(post.date)}
+                {formatDate(post.date, dict.months)}
               </span>
             </article>
           ))}

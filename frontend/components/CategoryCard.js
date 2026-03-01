@@ -1,18 +1,18 @@
 import Link from "next/link";
 
-export default function CategoryCard({ category }) {
+export default function CategoryCard({ category, lang, dict }) {
   const { name, posts } = category;
   const displayPosts = posts.slice(0, 5);
 
   return (
     <div className="w-full sm:w-[45%] text-left text-sm mt-8 px-[2%] min-h-[16em]">
-      <Link href={`/categories/${encodeURIComponent(name)}`}>
+      <Link href={`/${lang}/categories/${encodeURIComponent(name)}`}>
         <h3 className="text-lg font-semibold mb-2">{name}</h3>
       </Link>
       {displayPosts.map((post) => (
         <article key={post.slug} className="py-0.5">
           <Link
-            href={`/posts/${post.slug}`}
+            href={`/${lang}/posts/${post.slug}`}
             className="hover:text-[--link-hover] hover:bg-transparent transition-colors"
           >
             {post.title}
@@ -21,10 +21,10 @@ export default function CategoryCard({ category }) {
       ))}
       {posts.length > 5 && (
         <Link
-          href={`/categories/${encodeURIComponent(name)}`}
+          href={`/${lang}/categories/${encodeURIComponent(name)}`}
           className="text-sm mt-2 inline-block hover:text-[--link-hover]"
         >
-          More &gt;&gt;
+          {dict.common.more}
         </Link>
       )}
     </div>

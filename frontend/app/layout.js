@@ -1,6 +1,4 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import siteConfig from "@/lib/config";
 
@@ -14,17 +12,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh" suppressHydrationWarning>
       <body>
-        <ThemeProvider>
-          <div className="flex flex-col min-h-screen w-full">
-            <Header />
-            <main className="main-content flex-1 flex flex-col">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

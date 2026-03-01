@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "posts": "Posts",
+    "categories": "Categories",
+    "tags": "Tags",
+    "about": "About Me"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "post": {
+    "author": "Author: ",
+    "date": "Date: ",
+    "category": "Category: ",
+    "tags": "Tag(s): ",
+    "permalink": "Permalink: ",
+    "license": "License: ",
+    "slogan": "Slogan: ",
+    "home": "home"
+  },
+  "common": {
+    "backToTop": "Back to top",
+    "goToBottom": "Go to bottom",
+    "more": "More >>",
+    "archives": "Archives",
+    "categories": "Categories",
+    "tags": "Tags",
+    "tagCloud": "Tag Cloud",
+    "category": "Category",
+    "tag": "Tag"
+  },
+  "profile": {
+    "nickname": "Eva",
+    "navname": "Eva's Blog",
+    "title": "Eva's Blog",
+    "description": "A lifelong learner passionate about exploring cutting-edge technologies, <br>focusing on AI engineering practice and continuous innovation."
+  },
+  "links": {
+    "WeChat": "WeChat",
+    "RedBook": "RedBook",
+    "Github": "Github"
+  },
+  "footer": {
+    "rights": "All rights reserved"
+  },
+  "months": [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]
+}
