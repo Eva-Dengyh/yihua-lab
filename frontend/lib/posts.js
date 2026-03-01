@@ -40,3 +40,8 @@ export async function getPostsByCategory(category) {
   const data = await fetchJson(`/api/categories/${encodeURIComponent(category)}/posts`);
   return data.posts;
 }
+
+export async function getNavVisibility() {
+  const data = await fetchJson("/api/nav-visibility");
+  return data;
+}

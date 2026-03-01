@@ -1,16 +1,19 @@
 from flask import Blueprint, jsonify, request
 
+from auth import require_admin
 from crud import categories as crud
 
 bp = Blueprint("categories", __name__, url_prefix="/api/admin/categories")
 
 
 @bp.get("/")
+@require_admin
 def list_categories():
     return jsonify(crud.get_all())
 
 
 @bp.get("/<int:category_id>")
+@require_admin
 def get_category(category_id):
     item = crud.get_by_id(category_id)
     if not item:
@@ -19,6 +22,7 @@ def get_category(category_id):
 
 
 @bp.post("/")
+@require_admin
 def create_category():
     data = request.get_json(silent=True) or {}
     name = data.get("name")
@@ -29,6 +33,7 @@ def create_category():
 
 
 @bp.put("/<int:category_id>")
+@require_admin
 def update_category(category_id):
     data = request.get_json(silent=True) or {}
     allowed = {k: v for k, v in data.items() if k in ("name", "desc")}
@@ -41,6 +46,7 @@ def update_category(category_id):
 
 
 @bp.delete("/<int:category_id>")
+@require_admin
 def delete_category(category_id):
     crud.delete(category_id)
     return "", 204

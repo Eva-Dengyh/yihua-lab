@@ -1515,6 +1515,7 @@ dependencies = [
     { name = "flask-cors" },
     { name = "markdown" },
     { name = "pygments" },
+    { name = "pyjwt" },
     { name = "python-dotenv" },
     { name = "supabase" },
 ]
@@ -1530,6 +1531,7 @@ requires-dist = [
     { name = "flask-cors", specifier = ">=5.0" },
     { name = "markdown", specifier = ">=3.7" },
     { name = "pygments", specifier = ">=2.18" },
+    { name = "pyjwt", specifier = ">=2.8" },
     { name = "python-dotenv", specifier = ">=1.0" },
     { name = "supabase", specifier = ">=2.11" },
 ]

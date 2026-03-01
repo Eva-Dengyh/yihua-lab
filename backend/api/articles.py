@@ -1,17 +1,20 @@
 from flask import Blueprint, jsonify, request
 
+from auth import require_admin
 from crud import articles as crud
 
 bp = Blueprint("articles", __name__, url_prefix="/api/admin/articles")
 
 
 @bp.get("/")
+@require_admin
 def list_articles():
     category_id = request.args.get("category_id", type=int)
     return jsonify(crud.get_all(category_id=category_id))
 
 
 @bp.get("/<int:article_id>")
+@require_admin
 def get_article(article_id):
     item = crud.get_by_id(article_id)
     if not item:
@@ -20,6 +23,7 @@ def get_article(article_id):
 
 
 @bp.post("/")
+@require_admin
 def create_article():
     data = request.get_json(silent=True) or {}
     title = data.get("title")
@@ -35,6 +39,7 @@ def create_article():
 
 
 @bp.put("/<int:article_id>")
+@require_admin
 def update_article(article_id):
     data = request.get_json(silent=True) or {}
     allowed = {
@@ -50,6 +55,7 @@ def update_article(article_id):
 
 
 @bp.delete("/<int:article_id>")
+@require_admin
 def delete_article(article_id):
     crud.delete(article_id)
     return "", 204

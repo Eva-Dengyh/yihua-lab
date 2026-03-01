@@ -1,19 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import LangSwitch from "./LangSwitch";
+import NavVisibilityPanel from "./NavVisibilityPanel";
 import { useTheme } from "./ThemeProvider";
+import { isAdmin, removeToken } from "@/lib/auth";
 import siteConfig from "@/lib/config";
 
-const NAV_ROUTES = [
-  { key: "about", href: "/about" },
-];
+// 从 siteConfig.nav 生成全量路由
+const ALL_ROUTES = Object.entries(siteConfig.nav).map(([key, href]) => ({
+  key,
+  href,
+}));
 
-export default function Header({ lang, dict }) {
+export default function Header({ lang, dict, navVisibility = [] }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [visibility, setVisibility] = useState(navVisibility);
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    setAdminMode(isAdmin());
+  }, []);
+
+  const handleLogout = () => {
+    removeToken();
+    setAdminMode(false);
+    setPanelOpen(false);
+    window.location.reload();
+  };
+
+  const handleVisibilityUpdate = (updated) => {
+    setVisibility(updated);
+    setPanelOpen(false);
+  };
+
+  // 管理员看到所有导航，普通访客按配置过滤
+  const visibleRoutes = adminMode
+    ? ALL_ROUTES
+    : ALL_ROUTES.filter((route) => {
+        const config = visibility.find((v) => v.nav_key === route.key);
+        return config ? config.visible : false;
+      });
 
   return (
     <header className="select-none">
@@ -24,7 +55,7 @@ export default function Header({ lang, dict }) {
             <Link href={`/${lang}`}>{dict.profile.navname}</Link>
           </div>
           <div className="flex items-center">
-            {NAV_ROUTES.map(({ key, href }) => (
+            {visibleRoutes.map(({ key, href }) => (
               <Link key={key} href={`/${lang}${href}`} className="px-2 hover:text-[--link-hover]">
                 {dict.nav[key]}
               </Link>
@@ -33,6 +64,29 @@ export default function Header({ lang, dict }) {
             <div className="ml-4">
               <ThemeToggle />
             </div>
+            {adminMode && (
+              <div className="relative ml-3 flex items-center gap-2">
+                <button
+                  onClick={() => setPanelOpen(!panelOpen)}
+                  className="px-2 py-0.5 text-sm border border-[--border] rounded hover:text-[--link-hover] hover:border-[--link-hover] transition-colors"
+                  title="Configure nav visibility"
+                >
+                  Settings
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-2 py-0.5 text-sm border border-[--border] rounded hover:text-red-500 hover:border-red-500 transition-colors"
+                >
+                  Logout
+                </button>
+                {panelOpen && (
+                  <NavVisibilityPanel
+                    navVisibility={visibility}
+                    onUpdate={handleVisibilityUpdate}
+                  />
+                )}
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -51,6 +105,14 @@ export default function Header({ lang, dict }) {
           </div>
           <div className="flex items-center">
             <LangSwitch lang={lang} />
+            {adminMode && (
+              <button
+                onClick={handleLogout}
+                className="ml-2 px-2 py-0.5 text-xs border border-[--border] rounded hover:text-red-500 transition-colors"
+              >
+                Logout
+              </button>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="flex items-center cursor-pointer ml-2"
@@ -69,7 +131,7 @@ export default function Header({ lang, dict }) {
         </div>
         {mobileMenuOpen && (
           <div className="text-center border-t border-[--border] px-4 py-3 bg-[--bg] shadow-md whitespace-nowrap overflow-x-auto">
-            {NAV_ROUTES.map(({ key, href }) => (
+            {visibleRoutes.map(({ key, href }) => (
               <Link
                 key={key}
                 href={`/${lang}${href}`}
@@ -79,6 +141,25 @@ export default function Header({ lang, dict }) {
                 {dict.nav[key]}
               </Link>
             ))}
+            {adminMode && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setPanelOpen(!panelOpen);
+                }}
+                className="inline-block mx-4 leading-10 text-sm"
+              >
+                Settings
+              </button>
+            )}
+          </div>
+        )}
+        {adminMode && panelOpen && (
+          <div className="px-4 pb-3">
+            <NavVisibilityPanel
+              navVisibility={visibility}
+              onUpdate={handleVisibilityUpdate}
+            />
           </div>
         )}
       </nav>
