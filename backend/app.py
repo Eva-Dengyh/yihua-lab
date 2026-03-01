@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from api.categories import bp as categories_bp
@@ -11,6 +11,10 @@ from api.posts import bp as posts_bp
 def create_app():
     app = Flask(__name__)
     CORS(app)
+
+    @app.route("/api/health")
+    def health():
+        return jsonify({"status": "ok"})
 
     # 前端只读接口
     app.register_blueprint(posts_bp)
