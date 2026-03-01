@@ -2,8 +2,15 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SERVER="root@119.91.226.17"
-REMOTE_DIR="/opt/yihua-lab"
+
+if [ ! -f "${SCRIPT_DIR}/.deploy.env" ]; then
+  echo "错误: 未找到 .deploy.env 配置文件，请参考 .deploy.env.example 创建"
+  exit 1
+fi
+source "${SCRIPT_DIR}/.deploy.env"
+
+SERVER="${DEPLOY_SERVER}"
+REMOTE_DIR="${DEPLOY_REMOTE_DIR}"
 
 echo "============================================"
 echo "  yihua-lab 一键部署"

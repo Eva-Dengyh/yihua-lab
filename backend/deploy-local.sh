@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
-SERVER="root@119.91.226.17"
-REMOTE_DIR="/opt/yihua-lab/backend"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "${SCRIPT_DIR}/../.deploy.env"
+
+SERVER="${DEPLOY_SERVER}"
+REMOTE_DIR="${DEPLOY_REMOTE_DIR}/backend"
 REMOTE_TMP="/tmp/yihua-lab-deploy/backend"
-BACKUP_DIR="/opt/yihua-lab/backups/backend"
+BACKUP_DIR="${DEPLOY_REMOTE_DIR}/backups/backend"
 
 echo "=== [后端] 1/4 上传代码到服务器临时目录 ==="
 ssh ${SERVER} "mkdir -p ${REMOTE_TMP}"
@@ -14,6 +17,7 @@ rsync -avz --delete \
   --exclude='.env' \
   --exclude='*.pyc' \
   --exclude='.pytest_cache' \
+  --exclude='deploy-local.sh' \
   backend/ ${SERVER}:${REMOTE_TMP}/
 
 echo "=== [后端] 2/4 备份旧版本 ==="

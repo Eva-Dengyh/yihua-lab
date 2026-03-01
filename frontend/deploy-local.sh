@@ -1,10 +1,12 @@
 #!/bin/bash
 set -e
 
-SERVER="root@119.91.226.17"
-REMOTE_DIR="/opt/yihua-lab/frontend"
+source "$(cd "$(dirname "$0")" && pwd)/../.deploy.env"
+
+SERVER="${DEPLOY_SERVER}"
+REMOTE_DIR="${DEPLOY_REMOTE_DIR}/frontend"
 REMOTE_TMP="/tmp/yihua-lab-deploy/frontend"
-BACKUP_DIR="/opt/yihua-lab/backups/frontend"
+BACKUP_DIR="${DEPLOY_REMOTE_DIR}/backups/frontend"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=== [前端] 1/5 本地构建 ==="
