@@ -9,8 +9,6 @@ import siteConfig from "@/lib/config";
 
 const NAV_ROUTES = [
   { key: "about", href: "/about" },
-  { key: "posts", href: "/archives" },
-  { key: "categories", href: "/category" },
 ];
 
 export default function Header({ lang, dict }) {
