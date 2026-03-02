@@ -9,6 +9,14 @@ REMOTE_DIR="${DEPLOY_REMOTE_DIR}/backend"
 REMOTE_TMP="/tmp/yihua-lab-deploy/backend"
 BACKUP_DIR="${DEPLOY_REMOTE_DIR}/backups/backend"
 
+echo "=== [后端] 0/4 同步 .env 到服务器 ==="
+if [ -f "${SCRIPT_DIR}/../backend/.env" ]; then
+  rsync -avz "${SCRIPT_DIR}/../backend/.env" ${SERVER}:${REMOTE_DIR}/.env
+  echo ".env 同步完成"
+else
+  echo "警告: 本地 backend/.env 不存在，跳过同步"
+fi
+
 echo "=== [后端] 1/4 上传代码到服务器临时目录 ==="
 ssh ${SERVER} "mkdir -p ${REMOTE_TMP}"
 rsync -avz --delete \
