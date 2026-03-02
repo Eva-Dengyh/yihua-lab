@@ -62,12 +62,15 @@ export default function AdminLayout({ children }) {
           })}
         </nav>
         <div className="border-t border-gray-200 p-4 space-y-2">
-          <Link
-            href="/en"
+          <button
+            onClick={() => {
+              removeToken();
+              window.location.href = "/en";
+            }}
             className="block text-sm text-gray-500 hover:text-gray-800 transition-colors"
           >
             &larr; 返回博客
-          </Link>
+          </button>
           <button
             onClick={handleLogout}
             className="block text-sm text-gray-500 hover:text-red-500 transition-colors"
