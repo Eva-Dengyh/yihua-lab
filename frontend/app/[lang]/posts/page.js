@@ -8,7 +8,7 @@ export async function generateMetadata({ params }) {
   return { title: dict.common.archives };
 }
 
-export default async function ArchivesPage({ params }) {
+export default async function PostsPage({ params }) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
   const posts = await getAllPosts(lang);

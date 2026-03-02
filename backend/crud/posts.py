@@ -21,7 +21,7 @@ def _format_post(row, lang=None):
     if row.get("categories"):
         category_name = row["categories"]["name"]
     return {
-        "slug": row.get("url", ""),
+        "slug": str(row["id"]),
         "title": _extract_content(row.get("title", ""), lang),
         "date": row.get("publish_time", ""),
         "categories": [category_name] if category_name else [],
@@ -100,11 +100,11 @@ def get_all_posts(lang: str = None):
 
 
 def get_post_by_slug(slug: str, lang: str = None):
-    """根据 slug(url) 获取单篇文章"""
+    """根据 slug(id) 获取单篇文章"""
     data = (
         supabase.table("articles")
         .select("*, categories(name)")
-        .eq("url", slug)
+        .eq("id", slug)
         .execute()
         .data
     )
@@ -118,7 +118,7 @@ def get_adjacent_posts(slug: str, lang: str = None):
     current = (
         supabase.table("articles")
         .select("publish_time")
-        .eq("url", slug)
+        .eq("id", slug)
         .execute()
         .data
     )
@@ -129,7 +129,7 @@ def get_adjacent_posts(slug: str, lang: str = None):
 
     prev_data = (
         supabase.table("articles")
-        .select("url, title")
+        .select("id, title")
         .lt("publish_time", publish_time)
         .order("publish_time", desc=True)
         .limit(1)
@@ -139,7 +139,7 @@ def get_adjacent_posts(slug: str, lang: str = None):
 
     next_data = (
         supabase.table("articles")
-        .select("url, title")
+        .select("id, title")
         .gt("publish_time", publish_time)
         .order("publish_time", desc=False)
         .limit(1)
@@ -148,12 +148,12 @@ def get_adjacent_posts(slug: str, lang: str = None):
     )
 
     prev_post = (
-        {"slug": prev_data[0]["url"], "title": _extract_content(prev_data[0]["title"], lang)}
+        {"slug": str(prev_data[0]["id"]), "title": _extract_content(prev_data[0]["title"], lang)}
         if prev_data
         else None
     )
     next_post = (
-        {"slug": next_data[0]["url"], "title": _extract_content(next_data[0]["title"], lang)}
+        {"slug": str(next_data[0]["id"]), "title": _extract_content(next_data[0]["title"], lang)}
         if next_data
         else None
     )

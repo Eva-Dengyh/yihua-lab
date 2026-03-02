@@ -6,7 +6,7 @@ export default function Profile({ lang, dict }) {
     <div className="flex flex-col justify-center items-center flex-1 px-4">
       <div className="text-center">
         <div className="p-3">
-          <Link href={`/${lang}/archives`}>
+          <Link href={`/${lang}/posts`}>
             <img
               src={siteConfig.avatar}
               alt="avatar"

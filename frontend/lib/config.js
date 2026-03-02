@@ -4,7 +4,7 @@ const siteConfig = {
 
   // Navigator items (路由定义，文本由字典文件提供)
   nav: {
-    posts: "/archives",
+    posts: "/posts",
     categories: "/category",
     tags: "/tag",
     about: "/about",
