@@ -199,7 +199,7 @@ export default function AdminArticlesPage() {
       title: form.title,
       content: form.content,
       url: form.url || undefined,
-      category_id: form.category_id ? Number(form.category_id) : undefined,
+      category_id: form.category_id || null,
       publish_time: form.publish_time ? new Date(form.publish_time).toISOString() : undefined,
       tags: form.tags.length > 0 ? form.tags : [],
     };

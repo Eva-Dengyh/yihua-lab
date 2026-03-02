@@ -8,7 +8,7 @@ def get_all():
     return supabase.table(TABLE).select("*").execute().data
 
 
-def get_by_id(category_id: int):
+def get_by_id(category_id: str):
     """获取单个分类"""
     data = (
         supabase.table(TABLE)
@@ -28,7 +28,7 @@ def create(name: str, desc: str | None = None):
     return supabase.table(TABLE).insert(record).execute().data[0]
 
 
-def update(category_id: int, **fields):
+def update(category_id: str, **fields):
     """更新分类，只更新传入的字段"""
     data = (
         supabase.table(TABLE)
@@ -40,7 +40,7 @@ def update(category_id: int, **fields):
     return data[0] if data else None
 
 
-def delete(category_id: int):
+def delete(category_id: str):
     """删除分类"""
     return (
         supabase.table(TABLE)
