@@ -6,13 +6,23 @@ import { authHeaders } from "@/lib/auth";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const EMPTY_FORM = {
-  name: "",
+  name: { zh: "", en: "" },
   url: "",
-  description: "",
+  description: { zh: "", en: "" },
   tech_stack: "",
   media_url: "",
   media_type: "image",
 };
+
+const LANGS = [
+  { key: "zh", label: "中文" },
+  { key: "en", label: "English" },
+];
+
+function getDisplayName(name) {
+  if (typeof name === "string") return name;
+  return name?.zh || name?.en || "";
+}
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -20,6 +30,7 @@ export default function AdminProjectsPage() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
+  const [descLang, setDescLang] = useState("zh");
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
 
@@ -62,7 +73,6 @@ export default function AdminProjectsPage() {
 
     setProjects(reordered);
 
-    // 保存新排序到后端
     const items = reordered.map((p, i) => ({ id: p.id, sort_order: i }));
     try {
       await fetch(`${API_BASE}/api/admin/projects/reorder`, {
@@ -78,19 +88,30 @@ export default function AdminProjectsPage() {
 
   function openNew() {
     setForm(EMPTY_FORM);
+    setDescLang("zh");
     setEditing("new");
     setError("");
   }
 
   function openEdit(project) {
+    const name =
+      typeof project.name === "string"
+        ? { zh: project.name, en: project.name }
+        : project.name || { zh: "", en: "" };
+    const description =
+      typeof project.description === "string"
+        ? { zh: project.description, en: project.description }
+        : project.description || { zh: "", en: "" };
+
     setForm({
-      name: project.name || "",
+      name,
       url: project.url || "",
-      description: project.description || "",
+      description,
       tech_stack: project.tech_stack || "",
       media_url: project.media_url || "",
       media_type: project.media_type || "image",
     });
+    setDescLang("zh");
     setEditing(project.id);
     setError("");
   }
@@ -144,7 +165,7 @@ export default function AdminProjectsPage() {
     return <p className="p-8 text-gray-500">Loading...</p>;
   }
 
-  // 表单视图 — 占满整个右侧
+  // 表单视图
   if (editing !== null) {
     return (
       <div className="h-full flex flex-col p-8">
@@ -180,12 +201,34 @@ export default function AdminProjectsPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                项目名称 *
+                项目名称（中文）*
               </label>
               <input
                 type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                value={form.name.zh}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: { ...form.name, zh: e.target.value },
+                  })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Project Name (EN) *
+              </label>
+              <input
+                type="text"
+                value={form.name.en}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: { ...form.name, en: e.target.value },
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
                 required
               />
@@ -249,15 +292,41 @@ export default function AdminProjectsPage() {
           </div>
 
           <div className="flex-1 flex flex-col min-h-0">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              项目描述（支持 Markdown）
-            </label>
+            <div className="flex items-center gap-1 mb-1">
+              <span className="text-sm font-medium text-gray-700 mr-2">
+                项目描述（支持 Markdown）
+              </span>
+              {LANGS.map((l) => (
+                <button
+                  key={l.key}
+                  type="button"
+                  onClick={() => setDescLang(l.key)}
+                  className={`px-3 py-1 text-xs rounded transition-colors ${
+                    descLang === l.key
+                      ? "bg-gray-800 text-white"
+                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
             <textarea
-              value={form.description}
+              value={form.description[descLang] || ""}
               onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
+                setForm({
+                  ...form,
+                  description: {
+                    ...form.description,
+                    [descLang]: e.target.value,
+                  },
+                })
               }
-              placeholder={"## 项目简介\n\n描述你的项目...\n\n## 主要功能\n\n- 功能一\n- 功能二"}
+              placeholder={
+                descLang === "zh"
+                  ? "## 项目简介\n\n描述你的项目...\n\n## 主要功能\n\n- 功能一\n- 功能二"
+                  : "## Introduction\n\nDescribe your project...\n\n## Features\n\n- Feature 1\n- Feature 2"
+              }
               className="flex-1 w-full px-4 py-3 border border-gray-300 rounded font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-gray-500"
             />
           </div>
@@ -335,7 +404,7 @@ export default function AdminProjectsPage() {
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
                     >
-                      {project.name}
+                      {getDisplayName(project.name)}
                     </a>
                   </td>
                   <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">
