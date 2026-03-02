@@ -12,7 +12,7 @@ export default function CategoryCard({ category, lang, dict }) {
       {displayPosts.map((post) => (
         <article key={post.slug} className="py-0.5">
           <Link
-            href={`/${lang}/posts/${post.slug}`}
+            href={`/${lang}/posts/${encodeURIComponent(post.slug)}`}
             className="hover:text-[--link-hover] hover:bg-transparent transition-colors"
           >
             {post.title}

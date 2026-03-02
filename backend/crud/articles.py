@@ -26,10 +26,13 @@ def get_by_id(article_id: int):
     return data[0] if data else None
 
 
+OPTIONAL_FIELDS = ("url", "category_id", "publish_time", "tags")
+
+
 def create(title: str, content: dict, **optional):
-    """创建文章，optional 可包含 url, category_id"""
+    """创建文章，optional 可包含 url, category_id, publish_time"""
     record = {"title": title, "content": content}
-    for key in ("url", "category_id"):
+    for key in OPTIONAL_FIELDS:
         if key in optional:
             record[key] = optional[key]
     return supabase.table(TABLE).insert(record).execute().data[0]

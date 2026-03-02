@@ -3,28 +3,41 @@
 from config import supabase
 
 
-def _format_post(row):
+def _format_post(row, lang=None):
     """将 articles 表记录转换为前端 post 格式"""
     category_name = ""
     if row.get("categories"):
         category_name = row["categories"]["name"]
     return {
         "slug": row.get("url", ""),
-        "title": row["title"],
+        "title": _extract_content(row.get("title", ""), lang),
         "date": row.get("publish_time", ""),
         "categories": [category_name] if category_name else [],
-        "tags": [],
+        "tags": row.get("tags") or [],
     }
 
 
-def _format_post_detail(row):
+def _extract_content(raw, lang=None):
+    """从 JSONB 字段提取内容，支持多语言 {"zh": "...", "en": "..."}"""
+    if raw is None:
+        return ""
+    if isinstance(raw, str):
+        return raw
+    if isinstance(raw, dict) and lang:
+        return raw.get(lang) or raw.get("zh") or raw.get("en") or ""
+    if isinstance(raw, dict):
+        return raw.get("zh") or raw.get("en") or next(iter(raw.values()), "")
+    return str(raw)
+
+
+def _format_post_detail(row, lang=None):
     """带 content 的完整 post 格式"""
-    post = _format_post(row)
-    post["content"] = row.get("content", "")
+    post = _format_post(row, lang)
+    post["content"] = _extract_content(row.get("content", ""), lang)
     return post
 
 
-def get_all_posts():
+def get_all_posts(lang: str = None):
     """获取所有文章列表"""
     rows = (
         supabase.table("articles")
@@ -33,10 +46,10 @@ def get_all_posts():
         .execute()
         .data
     )
-    return [_format_post(r) for r in rows]
+    return [_format_post(r, lang) for r in rows]
 
 
-def get_post_by_slug(slug: str):
+def get_post_by_slug(slug: str, lang: str = None):
     """根据 slug(url) 获取单篇文章"""
     data = (
         supabase.table("articles")
@@ -47,12 +60,11 @@ def get_post_by_slug(slug: str):
     )
     if not data:
         return None
-    return _format_post_detail(data[0])
+    return _format_post_detail(data[0], lang)
 
 
-def get_adjacent_posts(slug: str):
+def get_adjacent_posts(slug: str, lang: str = None):
     """获取上一篇和下一篇文章"""
-    # 先获取当前文章的 publish_time
     current = (
         supabase.table("articles")
         .select("publish_time")
@@ -65,7 +77,6 @@ def get_adjacent_posts(slug: str):
 
     publish_time = current[0]["publish_time"]
 
-    # 上一篇：发布时间更早的最新一篇
     prev_data = (
         supabase.table("articles")
         .select("url, title")
@@ -76,7 +87,6 @@ def get_adjacent_posts(slug: str):
         .data
     )
 
-    # 下一篇：发布时间更晚的最早一篇
     next_data = (
         supabase.table("articles")
         .select("url, title")
@@ -88,19 +98,19 @@ def get_adjacent_posts(slug: str):
     )
 
     prev_post = (
-        {"slug": prev_data[0]["url"], "title": prev_data[0]["title"]}
+        {"slug": prev_data[0]["url"], "title": _extract_content(prev_data[0]["title"], lang)}
         if prev_data
         else None
     )
     next_post = (
-        {"slug": next_data[0]["url"], "title": next_data[0]["title"]}
+        {"slug": next_data[0]["url"], "title": _extract_content(next_data[0]["title"], lang)}
         if next_data
         else None
     )
     return {"prev": prev_post, "next": next_post}
 
 
-def get_all_categories_with_posts():
+def get_all_categories_with_posts(lang: str = None):
     """获取所有分类，每个分类附带文章列表"""
     categories = (
         supabase.table("categories").select("id, name").execute().data
@@ -117,14 +127,13 @@ def get_all_categories_with_posts():
         )
         result.append({
             "name": cat["name"],
-            "posts": [_format_post(p) for p in posts],
+            "posts": [_format_post(p, lang) for p in posts],
         })
     return result
 
 
-def get_posts_by_category(category_name: str):
+def get_posts_by_category(category_name: str, lang: str = None):
     """根据分类名获取文章列表"""
-    # 先查分类 id
     cat = (
         supabase.table("categories")
         .select("id")
@@ -142,4 +151,4 @@ def get_posts_by_category(category_name: str):
         .execute()
         .data
     )
-    return [_format_post(p) for p in posts]
+    return [_format_post(p, lang) for p in posts]

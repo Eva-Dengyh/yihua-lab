@@ -5,8 +5,11 @@ from crud import articles as crud
 
 bp = Blueprint("articles", __name__, url_prefix="/api/admin/articles")
 
+ALLOWED_OPTIONAL = ("url", "category_id", "publish_time", "tags")
+ALLOWED_UPDATE = ("title", "content", "url", "category_id", "publish_time", "tags")
 
-@bp.get("/")
+
+@bp.get("")
 @require_admin
 def list_articles():
     category_id = request.args.get("category_id", type=int)
@@ -22,7 +25,7 @@ def get_article(article_id):
     return jsonify(item)
 
 
-@bp.post("/")
+@bp.post("")
 @require_admin
 def create_article():
     data = request.get_json(silent=True) or {}
@@ -30,9 +33,13 @@ def create_article():
     content = data.get("content")
     if not title or content is None:
         return jsonify({"error": "title 和 content 为必填项"}), 400
+    if not isinstance(title, dict) or not (title.get("zh") or title.get("en")):
+        return jsonify({"error": "title 必须包含 zh 或 en 字段"}), 400
+    if not isinstance(content, dict) or not (content.get("zh") or content.get("en")):
+        return jsonify({"error": "content 必须包含 zh 或 en 字段"}), 400
     optional = {
         k: v for k, v in data.items()
-        if k in ("url", "category_id") and v is not None
+        if k in ALLOWED_OPTIONAL and v is not None
     }
     item = crud.create(title=title, content=content, **optional)
     return jsonify(item), 201
@@ -44,7 +51,7 @@ def update_article(article_id):
     data = request.get_json(silent=True) or {}
     allowed = {
         k: v for k, v in data.items()
-        if k in ("title", "content", "url", "category_id")
+        if k in ALLOWED_UPDATE
     }
     if not allowed:
         return jsonify({"error": "无有效更新字段"}), 400

@@ -8,6 +8,7 @@ import { isAdmin, removeToken } from "@/lib/auth";
 const MENU_ITEMS = [
   { label: "导航管理", href: "/admin/navigation" },
   { label: "项目管理", href: "/admin/projects" },
+  { label: "文章管理", href: "/admin/articles" },
 ];
 
 export default function AdminLayout({ children }) {

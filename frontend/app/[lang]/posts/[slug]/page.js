@@ -5,8 +5,9 @@ import TableOfContents from "@/components/TableOfContents";
 import siteConfig from "@/lib/config";
 
 export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { lang, slug } = await params;
+  const decodedSlug = decodeURIComponent(slug);
+  const post = await getPostBySlug(decodedSlug, lang);
   return { title: `${post.title} | ${siteConfig.title}` };
 }
 
@@ -22,9 +23,10 @@ function formatTime(dateStr) {
 
 export default async function PostPage({ params }) {
   const { lang, slug } = await params;
+  const decodedSlug = decodeURIComponent(slug);
   const dict = await getDictionary(lang);
-  const post = await getPostBySlug(slug);
-  const { prev, next } = await getAdjacentPosts(slug);
+  const post = await getPostBySlug(decodedSlug, lang);
+  const { prev, next } = await getAdjacentPosts(decodedSlug);
 
   return (
     <div className="px-4 flex-1 flex flex-col">
@@ -80,7 +82,7 @@ export default async function PostPage({ params }) {
               <p className="my-1">
                 <span className="font-semibold">{dict.post.permalink}</span>
                 <span>
-                  <a href={`/${lang}/posts/${slug}`}>{`/posts/${slug}`}</a>
+                  <a href={`/${lang}/posts/${encodeURIComponent(decodedSlug)}`}>{`/posts/${decodedSlug}`}</a>
                 </span>
               </p>
             )}

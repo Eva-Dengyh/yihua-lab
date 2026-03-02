@@ -5,7 +5,7 @@ export default function PostNav({ prev, next, lang }) {
     <section className="post-nav py-4 overflow-hidden">
       {prev && (
         <Link
-          href={`/${lang}/posts/${prev.slug}`}
+          href={`/${lang}/posts/${encodeURIComponent(prev.slug)}`}
           className="float-left font-semibold text-base transition-transform duration-300 hover:-translate-x-1"
         >
           <span className="mr-2 font-bold">&lt;</span>
@@ -14,7 +14,7 @@ export default function PostNav({ prev, next, lang }) {
       )}
       {next && (
         <Link
-          href={`/${lang}/posts/${next.slug}`}
+          href={`/${lang}/posts/${encodeURIComponent(next.slug)}`}
           className="float-right font-semibold text-base transition-transform duration-300 hover:translate-x-1"
         >
           {next.title}

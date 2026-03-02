@@ -23,7 +23,7 @@ export default function ArchiveList({ posts, lang, dict }) {
           {grouped[year].map((post) => (
             <article key={post.slug} className="ml-8 py-1">
               <Link
-                href={`/${lang}/posts/${post.slug}`}
+                href={`/${lang}/posts/${encodeURIComponent(post.slug)}`}
                 className="inline-block no-underline whitespace-nowrap overflow-hidden hover:text-[--link-hover] hover:bg-transparent transition-colors"
               >
                 {post.title}

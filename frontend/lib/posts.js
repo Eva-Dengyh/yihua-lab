@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function fetchJson(path) {
   const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
@@ -13,8 +13,9 @@ export async function getAllPosts() {
   return data.posts;
 }
 
-export async function getPostBySlug(slug) {
-  return fetchJson(`/api/posts/${encodeURIComponent(slug)}`);
+export async function getPostBySlug(slug, lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  return fetchJson(`/api/posts/${encodeURIComponent(slug)}${params}`);
 }
 
 export async function getAdjacentPosts(slug) {

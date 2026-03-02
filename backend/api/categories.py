@@ -6,7 +6,7 @@ from crud import categories as crud
 bp = Blueprint("categories", __name__, url_prefix="/api/admin/categories")
 
 
-@bp.get("/")
+@bp.get("")
 @require_admin
 def list_categories():
     return jsonify(crud.get_all())
@@ -21,7 +21,7 @@ def get_category(category_id):
     return jsonify(item)
 
 
-@bp.post("/")
+@bp.post("")
 @require_admin
 def create_category():
     data = request.get_json(silent=True) or {}
