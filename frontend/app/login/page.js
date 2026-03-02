@@ -29,7 +29,7 @@ export default function LoginPage() {
         return;
       }
       saveToken(data.token);
-      router.push("/en");
+      router.push("/admin");
     } catch {
       setError("网络错误，请稍后重试");
     } finally {

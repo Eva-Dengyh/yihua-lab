@@ -8,6 +8,7 @@ const siteConfig = {
     categories: "/category",
     tags: "/tag",
     about: "/about",
+    projects: "/projects",
   },
 
   // Favicon

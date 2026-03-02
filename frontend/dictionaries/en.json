@@ -3,7 +3,8 @@
     "posts": "Posts",
     "categories": "Categories",
     "tags": "Tags",
-    "about": "About Me"
+    "about": "About Me",
+    "projects": "Projects"
   },
   "theme": {
     "light": "Light",
@@ -40,6 +41,12 @@
     "WeChat": "WeChat",
     "RedBook": "RedBook",
     "Github": "Github"
+  },
+  "projects": {
+    "title": "Projects",
+    "viewProject": "View Project",
+    "techStack": "Tech Stack",
+    "noProjects": "No projects yet."
   },
   "footer": {
     "rights": "All rights reserved"

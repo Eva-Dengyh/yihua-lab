@@ -1,0 +1,98 @@
+import { getDictionary } from "@/lib/dictionaries";
+import { getAllProjects } from "@/lib/projects";
+import siteConfig from "@/lib/config";
+
+export async function generateMetadata({ params }) {
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
+  return { title: `${dict.projects.title} | ${siteConfig.title}` };
+}
+
+export default async function ProjectsPage({ params }) {
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
+  const projects = await getAllProjects();
+
+  return (
+    <div className="px-4 flex-1 flex flex-col">
+      <div className="relative w-full max-w-[780px] mx-auto pt-8 flex-1">
+        {siteConfig.page_title_enable && (
+          <h2 className="text-3xl leading-relaxed font-semibold">
+            {dict.projects.title}
+          </h2>
+        )}
+
+        {projects.length === 0 ? (
+          <p className="text-[--text-secondary] mt-8">{dict.projects.noProjects}</p>
+        ) : (
+          <div className="mt-6 space-y-8">
+            {projects.map((project) => (
+              <article
+                key={project.id}
+                className="border-b border-[--border] pb-6"
+              >
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* 媒体缩略图 */}
+                  {project.media_url && (
+                    <div className="sm:w-48 flex-shrink-0">
+                      {project.media_type === "video" ? (
+                        <video
+                          src={project.media_url}
+                          className="w-full h-32 object-cover rounded"
+                          muted
+                          loop
+                          autoPlay
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          src={project.media_url}
+                          alt={project.name}
+                          className="w-full h-32 object-cover rounded"
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 项目信息 */}
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold">
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-[--link-hover] transition-colors"
+                      >
+                        {project.name}
+                        <span className="inline-block ml-1 text-sm text-[--text-secondary]">↗</span>
+                      </a>
+                    </h3>
+
+                    {project.description && (
+                      <p className="text-sm text-[--text-secondary] mt-1 leading-relaxed">
+                        {project.description}
+                      </p>
+                    )}
+
+                    {project.tech_stack && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {project.tech_stack.split(",").map((tech) => (
+                          <span
+                            key={tech.trim()}
+                            className="px-2 py-0.5 text-xs border border-[--border] rounded"
+                          >
+                            {tech.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

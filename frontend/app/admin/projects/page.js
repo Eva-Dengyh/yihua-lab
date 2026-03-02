@@ -1,0 +1,315 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { authHeaders } from "@/lib/auth";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+const EMPTY_FORM = {
+  name: "",
+  url: "",
+  description: "",
+  tech_stack: "",
+  media_url: "",
+  media_type: "image",
+  sort_order: 0,
+};
+
+export default function AdminProjectsPage() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  async function fetchProjects() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/projects`, {
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error("获取项目失败");
+      setProjects(await res.json());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function openNew() {
+    setForm(EMPTY_FORM);
+    setEditing("new");
+    setError("");
+  }
+
+  function openEdit(project) {
+    setForm({
+      name: project.name || "",
+      url: project.url || "",
+      description: project.description || "",
+      tech_stack: project.tech_stack || "",
+      media_url: project.media_url || "",
+      media_type: project.media_type || "image",
+      sort_order: project.sort_order ?? 0,
+    });
+    setEditing(project.id);
+    setError("");
+  }
+
+  function cancelEdit() {
+    setEditing(null);
+    setError("");
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+
+    const isNew = editing === "new";
+    const endpoint = isNew
+      ? `${API_BASE}/api/admin/projects`
+      : `${API_BASE}/api/admin/projects/${editing}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: isNew ? "POST" : "PUT",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({
+          ...form,
+          sort_order: Number(form.sort_order) || 0,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "操作失败");
+        return;
+      }
+      setEditing(null);
+      await fetchProjects();
+    } catch {
+      setError("网络错误");
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!confirm("确定删除该项目？")) return;
+    try {
+      await fetch(`${API_BASE}/api/admin/projects/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      await fetchProjects();
+    } catch {
+      setError("删除失败");
+    }
+  }
+
+  if (loading) {
+    return <p className="p-8 text-gray-500">Loading...</p>;
+  }
+
+  // 表单视图
+  if (editing !== null) {
+    return (
+      <div className="p-8">
+        <div className="max-w-xl bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-xl font-semibold text-gray-800 mb-4">
+            {editing === "new" ? "新建项目" : "编辑项目"}
+          </h1>
+          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                项目名称 *
+              </label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                项目 URL *
+              </label>
+              <input
+                type="url"
+                value={form.url}
+                onChange={(e) => setForm({ ...form, url: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                项目描述
+              </label>
+              <textarea
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                技术栈（逗号分隔）
+              </label>
+              <input
+                type="text"
+                value={form.tech_stack}
+                onChange={(e) =>
+                  setForm({ ...form, tech_stack: e.target.value })
+                }
+                placeholder="React, Flask, Supabase"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                图片/视频 URL
+              </label>
+              <input
+                type="url"
+                value={form.media_url}
+                onChange={(e) =>
+                  setForm({ ...form, media_url: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                媒体类型
+              </label>
+              <select
+                value={form.media_type}
+                onChange={(e) =>
+                  setForm({ ...form, media_type: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+              >
+                <option value="image">图片</option>
+                <option value="video">视频</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                排序（数字越小越靠前）
+              </label>
+              <input
+                type="number"
+                value={form.sort_order}
+                onChange={(e) =>
+                  setForm({ ...form, sort_order: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                保存
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+              >
+                取消
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // 列表视图
+  return (
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-semibold text-gray-800">项目管理</h1>
+        <button
+          onClick={openNew}
+          className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors text-sm"
+        >
+          + 新建项目
+        </button>
+      </div>
+
+      {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+      {projects.length === 0 ? (
+        <p className="text-gray-500 text-center py-12">暂无项目</p>
+      ) : (
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                  名称
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 hidden sm:table-cell">
+                  技术栈
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 w-16">
+                  排序
+                </th>
+                <th className="text-right px-4 py-3 font-medium text-gray-600 w-28">
+                  操作
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {projects.map((project) => (
+                <tr key={project.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    <a
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {project.name}
+                    </a>
+                  </td>
+                  <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">
+                    {project.tech_stack || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-gray-500">
+                    {project.sort_order}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => openEdit(project)}
+                      className="text-blue-600 hover:underline mr-3"
+                    >
+                      编辑
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project.id)}
+                      className="text-red-500 hover:underline"
+                    >
+                      删除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

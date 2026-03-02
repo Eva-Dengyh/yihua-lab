@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import LangSwitch from "./LangSwitch";
-import NavVisibilityPanel from "./NavVisibilityPanel";
 import { useTheme } from "./ThemeProvider";
 import { isAdmin, removeToken } from "@/lib/auth";
 import siteConfig from "@/lib/config";
@@ -18,7 +17,6 @@ const ALL_ROUTES = Object.entries(siteConfig.nav).map(([key, href]) => ({
 export default function Header({ lang, dict, navVisibility = [] }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
-  const [panelOpen, setPanelOpen] = useState(false);
   const [visibility, setVisibility] = useState(navVisibility);
   const { theme, toggleTheme } = useTheme();
 
@@ -29,13 +27,7 @@ export default function Header({ lang, dict, navVisibility = [] }) {
   const handleLogout = () => {
     removeToken();
     setAdminMode(false);
-    setPanelOpen(false);
     window.location.reload();
-  };
-
-  const handleVisibilityUpdate = (updated) => {
-    setVisibility(updated);
-    setPanelOpen(false);
   };
 
   // 管理员看到所有导航，普通访客按配置过滤
@@ -66,25 +58,18 @@ export default function Header({ lang, dict, navVisibility = [] }) {
             </div>
             {adminMode && (
               <div className="relative ml-3 flex items-center gap-2">
-                <button
-                  onClick={() => setPanelOpen(!panelOpen)}
+                <Link
+                  href="/admin"
                   className="px-2 py-0.5 text-sm border border-[--border] rounded hover:text-[--link-hover] hover:border-[--link-hover] transition-colors"
-                  title="Configure nav visibility"
                 >
-                  Settings
-                </button>
+                  Manage
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="px-2 py-0.5 text-sm border border-[--border] rounded hover:text-red-500 hover:border-red-500 transition-colors"
                 >
                   Logout
                 </button>
-                {panelOpen && (
-                  <NavVisibilityPanel
-                    navVisibility={visibility}
-                    onUpdate={handleVisibilityUpdate}
-                  />
-                )}
               </div>
             )}
           </div>
@@ -106,12 +91,20 @@ export default function Header({ lang, dict, navVisibility = [] }) {
           <div className="flex items-center">
             <LangSwitch lang={lang} />
             {adminMode && (
-              <button
-                onClick={handleLogout}
-                className="ml-2 px-2 py-0.5 text-xs border border-[--border] rounded hover:text-red-500 transition-colors"
-              >
-                Logout
-              </button>
+              <>
+                <Link
+                  href="/admin"
+                  className="ml-2 px-2 py-0.5 text-xs border border-[--border] rounded hover:text-[--link-hover] transition-colors"
+                >
+                  Manage
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="ml-2 px-2 py-0.5 text-xs border border-[--border] rounded hover:text-red-500 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
             )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -141,25 +134,6 @@ export default function Header({ lang, dict, navVisibility = [] }) {
                 {dict.nav[key]}
               </Link>
             ))}
-            {adminMode && (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setPanelOpen(!panelOpen);
-                }}
-                className="inline-block mx-4 leading-10 text-sm"
-              >
-                Settings
-              </button>
-            )}
-          </div>
-        )}
-        {adminMode && panelOpen && (
-          <div className="px-4 pb-3">
-            <NavVisibilityPanel
-              navVisibility={visibility}
-              onUpdate={handleVisibilityUpdate}
-            />
           </div>
         )}
       </nav>

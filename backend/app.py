@@ -8,6 +8,7 @@ from api.categories import bp as categories_bp
 from api.articles import bp as articles_bp
 from api.nav_visibility import bp as nav_visibility_bp
 from api.posts import bp as posts_bp
+from api.projects import bp as projects_bp
 
 
 def create_app():
@@ -26,6 +27,7 @@ def create_app():
     # 管理端 CRUD 接口
     app.register_blueprint(categories_bp)
     app.register_blueprint(articles_bp)
+    app.register_blueprint(projects_bp)
 
     return app
 

@@ -36,4 +36,18 @@ INSERT INTO nav_visibility (nav_key, visible) VALUES
   ('posts', false),
   ('categories', false),
   ('tags', false),
-  ('about', true);
+  ('about', true),
+  ('projects', false);
+
+-- 项目展示表
+CREATE TABLE projects (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  url VARCHAR(512) NOT NULL,
+  description TEXT,
+  tech_stack VARCHAR(512),
+  media_url VARCHAR(512),
+  media_type VARCHAR(10) DEFAULT 'image',
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
