@@ -9,6 +9,28 @@ export async function generateMetadata({ params }) {
   return { title: `${dict.projects.title} | ${siteConfig.title}` };
 }
 
+function deepParse(val) {
+  while (typeof val === "string") {
+    try { val = JSON.parse(val); } catch { return val; }
+  }
+  return val;
+}
+
+function localize(field, lang) {
+  if (!field) return "";
+  let val = deepParse(field);
+  if (typeof val === "object" && val !== null) {
+    // 提取语言值后再深度解析，防止值本身也是 JSON 字符串
+    const text = val[lang] || val.zh || val.en || "";
+    const parsed = deepParse(text);
+    if (typeof parsed === "object" && parsed !== null) {
+      return parsed[lang] || parsed.zh || parsed.en || "";
+    }
+    return text;
+  }
+  return String(val);
+}
+
 export default async function ProjectsPage({ params }) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
@@ -48,7 +70,7 @@ export default async function ProjectsPage({ params }) {
                       ) : (
                         <img
                           src={project.media_url}
-                          alt={project.name}
+                          alt={localize(project.name, lang)}
                           className="w-full h-32 object-cover rounded"
                         />
                       )}
@@ -64,16 +86,16 @@ export default async function ProjectsPage({ params }) {
                         rel="noopener noreferrer"
                         className="hover:text-[--link-hover] transition-colors"
                       >
-                        {project.name}
+                        {localize(project.name, lang)}
                         <span className="inline-block ml-1 text-sm text-[--text-secondary]">↗</span>
                       </a>
                     </h3>
 
-                    {project.description && (
+                    {localize(project.description, lang) && (
                       <div
                         className="post-content text-sm mt-1"
                         dangerouslySetInnerHTML={{
-                          __html: marked(project.description),
+                          __html: marked(localize(project.description, lang)),
                         }}
                       />
                     )}

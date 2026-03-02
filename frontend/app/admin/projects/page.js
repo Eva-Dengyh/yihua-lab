@@ -19,9 +19,18 @@ const LANGS = [
   { key: "en", label: "English" },
 ];
 
+function deepParse(val) {
+  while (typeof val === "string") {
+    try { val = JSON.parse(val); } catch { return val; }
+  }
+  return val;
+}
+
 function getDisplayName(name) {
-  if (typeof name === "string") return name;
-  return name?.zh || name?.en || "";
+  if (!name) return "";
+  const val = deepParse(name);
+  if (typeof val === "object" && val !== null) return val.zh || val.en || "";
+  return String(val);
 }
 
 export default function AdminProjectsPage() {
@@ -93,15 +102,16 @@ export default function AdminProjectsPage() {
     setError("");
   }
 
+  function parseI18n(field) {
+    if (!field) return { zh: "", en: "" };
+    const val = deepParse(field);
+    if (typeof val === "object" && val !== null) return { zh: val.zh || "", en: val.en || "" };
+    return { zh: String(val), en: String(val) };
+  }
+
   function openEdit(project) {
-    const name =
-      typeof project.name === "string"
-        ? { zh: project.name, en: project.name }
-        : project.name || { zh: "", en: "" };
-    const description =
-      typeof project.description === "string"
-        ? { zh: project.description, en: project.description }
-        : project.description || { zh: "", en: "" };
+    const name = parseI18n(project.name);
+    const description = parseI18n(project.description);
 
     setForm({
       name,
