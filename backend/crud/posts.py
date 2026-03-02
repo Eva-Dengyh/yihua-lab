@@ -1,6 +1,18 @@
 """前端适配的查询层，将 DB 结构映射为前端期望的格式"""
 
+import re
+
+import markdown
 from config import supabase
+
+MD_EXTENSIONS = [
+    "fenced_code",
+    "tables",
+    "toc",
+    "nl2br",
+    "sane_lists",
+]
+MD_EXTENSION_CONFIGS = {}
 
 
 def _format_post(row, lang=None):
@@ -21,8 +33,17 @@ def _extract_content(raw, lang=None):
     """从 JSONB 字段提取内容，支持多语言 {"zh": "...", "en": "..."}"""
     if raw is None:
         return ""
+    # JSONB 可能被双重序列化为字符串，尝试解析
     if isinstance(raw, str):
-        return raw
+        try:
+            import json
+            parsed = json.loads(raw)
+            if isinstance(parsed, dict):
+                raw = parsed
+            else:
+                return raw
+        except (json.JSONDecodeError, TypeError):
+            return raw
     if isinstance(raw, dict) and lang:
         return raw.get(lang) or raw.get("zh") or raw.get("en") or ""
     if isinstance(raw, dict):
@@ -30,10 +51,39 @@ def _extract_content(raw, lang=None):
     return str(raw)
 
 
+def _md_to_html(text):
+    """将 Markdown 文本转换为 HTML"""
+    if not text:
+        return ""
+    # 规范化换行符：将字面量 \n 转为实际换行，统一 \r\n 为 \n
+    text = text.replace("\\n", "\n").replace("\r\n", "\n")
+    # 去除每行公共缩进（跳过空行和无缩进行计算最小缩进）
+    lines = text.split("\n")
+    indents = [
+        len(line) - len(line.lstrip())
+        for line in lines
+        if line.strip() and line[0] == " "
+    ]
+    if indents:
+        common = min(indents)
+        if common > 0:
+            text = re.sub(rf"(?m)^ {{{common}}}", "", text)
+    # 自动补全未闭合的代码围栏
+    fence_count = len(re.findall(r"^`{3,}", text, re.MULTILINE))
+    if fence_count % 2 == 1:
+        text += "\n```"
+    return markdown.markdown(
+        text,
+        extensions=MD_EXTENSIONS,
+        extension_configs=MD_EXTENSION_CONFIGS,
+    )
+
+
 def _format_post_detail(row, lang=None):
     """带 content 的完整 post 格式"""
     post = _format_post(row, lang)
-    post["content"] = _extract_content(row.get("content", ""), lang)
+    raw_content = _extract_content(row.get("content", ""), lang)
+    post["content"] = _md_to_html(raw_content)
     return post
 
 

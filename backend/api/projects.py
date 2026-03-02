@@ -53,7 +53,7 @@ def reorder_projects():
     return jsonify(crud.get_all())
 
 
-@bp.get("/api/admin/projects/<int:project_id>")
+@bp.get("/api/admin/projects/<project_id>")
 @require_admin
 def get_project(project_id):
     item = crud.get_by_id(project_id)
@@ -62,7 +62,7 @@ def get_project(project_id):
     return jsonify(item)
 
 
-@bp.put("/api/admin/projects/<int:project_id>")
+@bp.put("/api/admin/projects/<project_id>")
 @require_admin
 def update_project(project_id):
     data = request.get_json(silent=True) or {}
@@ -75,7 +75,7 @@ def update_project(project_id):
     return jsonify(item)
 
 
-@bp.delete("/api/admin/projects/<int:project_id>")
+@bp.delete("/api/admin/projects/<project_id>")
 @require_admin
 def delete_project(project_id):
     crud.delete(project_id)

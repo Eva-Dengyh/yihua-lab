@@ -2,6 +2,7 @@ import { getPostBySlug, getAdjacentPosts } from "@/lib/posts";
 import { getDictionary } from "@/lib/dictionaries";
 import PostNav from "@/components/PostNav";
 import TableOfContents from "@/components/TableOfContents";
+import CodeHighlight from "@/components/CodeHighlight";
 import siteConfig from "@/lib/config";
 
 export async function generateMetadata({ params }) {
@@ -26,7 +27,7 @@ export default async function PostPage({ params }) {
   const decodedSlug = decodeURIComponent(slug);
   const dict = await getDictionary(lang);
   const post = await getPostBySlug(decodedSlug, lang);
-  const { prev, next } = await getAdjacentPosts(decodedSlug);
+  const { prev, next } = await getAdjacentPosts(decodedSlug, lang);
 
   return (
     <div className="px-4 flex-1 flex flex-col">
@@ -69,6 +70,7 @@ export default async function PostPage({ params }) {
           className="post-content"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+        <CodeHighlight />
 
         {siteConfig.post_copyright_enable && (
           <section className="post-copyright">

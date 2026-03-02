@@ -36,7 +36,7 @@ const siteConfig = {
   post_category_enable: true,
 
   // Post copyright
-  post_copyright_enable: true,
+  post_copyright_enable: false,
   post_copyright_author_enable: true,
   post_copyright_permalink_enable: true,
   post_copyright_license_enable: true,

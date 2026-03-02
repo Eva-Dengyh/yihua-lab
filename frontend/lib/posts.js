@@ -8,8 +8,9 @@ async function fetchJson(path) {
   return res.json();
 }
 
-export async function getAllPosts() {
-  const data = await fetchJson("/api/posts");
+export async function getAllPosts(lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  const data = await fetchJson(`/api/posts${params}`);
   return data.posts;
 }
 
@@ -18,8 +19,9 @@ export async function getPostBySlug(slug, lang) {
   return fetchJson(`/api/posts/${encodeURIComponent(slug)}${params}`);
 }
 
-export async function getAdjacentPosts(slug) {
-  return fetchJson(`/api/posts/${encodeURIComponent(slug)}/adjacent`);
+export async function getAdjacentPosts(slug, lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  return fetchJson(`/api/posts/${encodeURIComponent(slug)}/adjacent${params}`);
 }
 
 export async function getAllTags() {
@@ -27,18 +29,21 @@ export async function getAllTags() {
   return data.tags;
 }
 
-export async function getPostsByTag(tag) {
-  const data = await fetchJson(`/api/tags/${encodeURIComponent(tag)}/posts`);
+export async function getPostsByTag(tag, lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  const data = await fetchJson(`/api/tags/${encodeURIComponent(tag)}/posts${params}`);
   return data.posts;
 }
 
-export async function getAllCategories() {
-  const data = await fetchJson("/api/categories");
+export async function getAllCategories(lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  const data = await fetchJson(`/api/categories${params}`);
   return data.categories;
 }
 
-export async function getPostsByCategory(category) {
-  const data = await fetchJson(`/api/categories/${encodeURIComponent(category)}/posts`);
+export async function getPostsByCategory(category, lang) {
+  const params = lang ? `?lang=${lang}` : "";
+  const data = await fetchJson(`/api/categories/${encodeURIComponent(category)}/posts${params}`);
   return data.posts;
 }
 

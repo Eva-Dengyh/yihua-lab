@@ -12,7 +12,7 @@ export default async function SingleCategoryPage({ params }) {
   const { lang, category } = await params;
   const dict = await getDictionary(lang);
   const decodedCategory = decodeURIComponent(category);
-  const posts = await getPostsByCategory(decodedCategory);
+  const posts = await getPostsByCategory(decodedCategory, lang);
 
   return (
     <div className="px-4 flex-1 flex flex-col">

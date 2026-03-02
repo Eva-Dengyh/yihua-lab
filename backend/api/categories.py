@@ -12,7 +12,7 @@ def list_categories():
     return jsonify(crud.get_all())
 
 
-@bp.get("/<int:category_id>")
+@bp.get("/<category_id>")
 @require_admin
 def get_category(category_id):
     item = crud.get_by_id(category_id)
@@ -32,7 +32,7 @@ def create_category():
     return jsonify(item), 201
 
 
-@bp.put("/<int:category_id>")
+@bp.put("/<category_id>")
 @require_admin
 def update_category(category_id):
     data = request.get_json(silent=True) or {}
@@ -45,7 +45,7 @@ def update_category(category_id):
     return jsonify(item)
 
 
-@bp.delete("/<int:category_id>")
+@bp.delete("/<category_id>")
 @require_admin
 def delete_category(category_id):
     crud.delete(category_id)

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
 export default async function ArchivesPage({ params }) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const posts = await getAllPosts();
+  const posts = await getAllPosts(lang);
 
   return (
     <div className="px-4 flex-1 flex flex-col">

@@ -16,7 +16,7 @@ def list_articles():
     return jsonify(crud.get_all(category_id=category_id))
 
 
-@bp.get("/<int:article_id>")
+@bp.get("/<article_id>")
 @require_admin
 def get_article(article_id):
     item = crud.get_by_id(article_id)
@@ -45,7 +45,7 @@ def create_article():
     return jsonify(item), 201
 
 
-@bp.put("/<int:article_id>")
+@bp.put("/<article_id>")
 @require_admin
 def update_article(article_id):
     data = request.get_json(silent=True) or {}
@@ -61,7 +61,7 @@ def update_article(article_id):
     return jsonify(item)
 
 
-@bp.delete("/<int:article_id>")
+@bp.delete("/<article_id>")
 @require_admin
 def delete_article(article_id):
     crud.delete(article_id)

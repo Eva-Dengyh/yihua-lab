@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
 export default async function CategoryPage({ params }) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const categories = await getAllCategories();
+  const categories = await getAllCategories(lang);
 
   return (
     <div className="px-4 flex-1 flex flex-col">

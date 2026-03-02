@@ -12,7 +12,7 @@ export default async function SingleTagPage({ params }) {
   const { lang, tag } = await params;
   const dict = await getDictionary(lang);
   const decodedTag = decodeURIComponent(tag);
-  const posts = await getPostsByTag(decodedTag);
+  const posts = await getPostsByTag(decodedTag, lang);
 
   return (
     <div className="px-4 flex-1 flex flex-col">
