@@ -48,11 +48,11 @@ export default async function ProjectsPage({ params }) {
         {projects.length === 0 ? (
           <p className="text-[--text-secondary] mt-8">{dict.projects.noProjects}</p>
         ) : (
-          <div className="mt-6 space-y-8">
+          <div className="mt-6 space-y-5">
             {projects.map((project) => (
               <article
                 key={project.id}
-                className="border-b border-[--border] pb-6"
+                className="bg-[--card-bg] border border-[--border] rounded-lg p-5 hover:shadow-md transition-shadow"
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   {/* 媒体缩略图 */}
@@ -61,7 +61,7 @@ export default async function ProjectsPage({ params }) {
                       {project.media_type === "video" ? (
                         <video
                           src={project.media_url}
-                          className="w-full h-32 object-cover rounded"
+                          className="w-full h-32 object-cover rounded-lg"
                           muted
                           loop
                           autoPlay
@@ -71,7 +71,7 @@ export default async function ProjectsPage({ params }) {
                         <img
                           src={project.media_url}
                           alt={localize(project.name, lang)}
-                          className="w-full h-32 object-cover rounded"
+                          className="w-full h-32 object-cover rounded-lg"
                         />
                       )}
                     </div>

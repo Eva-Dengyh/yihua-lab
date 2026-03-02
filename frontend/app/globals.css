@@ -12,6 +12,7 @@
   --pagination-link: #2d96bd;
   --pagination-active: #000;
   --border: #e8e8e8;
+  --card-bg: #ffffff;
   --code-color: #c7254e;
   --code-bg: #f8f5ec;
   --blockquote-border: #2d96bd;
@@ -31,6 +32,7 @@
   --pagination-link: #a9a9b3;
   --pagination-active: #fff;
   --border: #909196;
+  --card-bg: #313235;
   --code-color: #fffe28;
   --code-bg: #787575;
   --blockquote-border: #dcdcdc;
@@ -46,6 +48,7 @@
   --color-link: var(--link);
   --color-link-hover: var(--link-hover);
   --color-border: var(--border);
+  --color-card-bg: var(--card-bg);
 }
 
 /* ===== Base Styles ===== */
