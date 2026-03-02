@@ -9,6 +9,7 @@ const MENU_ITEMS = [
   { label: "导航管理", href: "/admin/navigation" },
   { label: "项目管理", href: "/admin/projects" },
   { label: "文章管理", href: "/admin/articles" },
+  { label: "图片管理", href: "/admin/images" },
 ];
 
 export default function AdminLayout({ children }) {
