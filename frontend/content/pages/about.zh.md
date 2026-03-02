@@ -1,57 +1,16 @@
 ---
-title: About
+title: 小邓
 ---
-
-## 个人简介
-
 人工智能应用开发工程师 / 中国计算机学会（CCF）会员 / 软件工程专业工学学士
 
-本人就职于一家专注于AI领域的出海SaaS公司，产品面向全球市场，主要面向对象为海内外金融科技用户。本人专注于人工智能应用开发，重点研究大语言模型（LLM）在真实场景中的高效部署与系统集成。研究方向涵盖检索增强生成（RAG）、多智能体系统（Multi-Agent Systems）与多模态内容生成，聚焦于复杂任务中模型的知识调度、智能体协同决策以及多模态内容生成能力。
-
-- **核心技术：** 深入研究并实践检索增强生成（RAG）、多智能体（Multi-Agent）系统与多模态生成，聚焦于LLM在复杂任务中的知识调度、协同决策与高效部署。
-- **数据引擎实战：** 目前正在独立设计并构建高频期权异动数据流引擎，通过自研核心算法，每日从GB级原始交易数据中精准提炼高价值"聪明钱"信号，将原始噪音转化为结构化决策信息。
-- **价值主张：** 致力于融合数据工程的严谨性与AI的智能化，交付从海量数据洞察到智能决策支持的端到端解决方案，在金融信息服务等复杂场景中创造价值。
-
-## 在校研究项目
-
-### Py-Pose-Web：基于人体姿态估计算法的智能 Web 平台
-
-系统融合深度学习与前后端架构，基于 Ultralytics YOLOv8 实现人体骨骼关键点定位检测，并通过 Flask Blueprints 构建模块化后端接口。支持静态图像、动态视频及实时摄像头输入的姿态估计，在浏览器端实现可视化交互展示，适用于体育分析、人机交互等多种场景。
-
-**技术栈：** YOLOv8 Pose、Flask、Blueprints、JavaScript、OpenCV、Numpy、HTML/CSS、PostgreSQL
-
-### Face-VectorDB-Login：基于向量数据库的人脸识别登录系统
-
-项目实现基于向量检索机制的人脸身份认证系统，采用 RetinaFace 和 ArcFace 构建高精度人脸检测与识别模型，结合 FAISS 高效索引库完成特征向量比对。系统支持人脸注册、验证与身份管理，后端利用 Flask 提供接口服务，前端通过 Electron + React 构建桌面应用，具备良好的交互体验与安全性保障。
-
-**技术栈：** RetinaFace、ArcFace、iResNet50、FAISS、Flask、Electron、React、Spring Boot、PostgreSQL
-
-### Label-Explorer：多源数据标注与可视化探索工具
-
-工具面向计算机视觉任务中的标注数据管理，专为 YOLO 格式设计的数据集分析平台。基于 Electron 构建跨平台桌面应用，支持原始图像、标签、类别及元数据文件的统一管理与可视化，为数据清洗、标注审核及模型训练准备提供完整支持。
-
-**技术栈：** Electron、Node.js、Python、Label Studio API
-
-### 基于深度学习的人脸视频会议签到系统
-
-系统集成视频通信与智能人脸识别功能，构建一套完整的视频会议出勤管理平台。前端采用 React + Electron 实现跨平台桌面应用，后端基于 Spring Boot 负责身份识别逻辑并接入 MySQL 数据库。通过 DJL 加载 RetinaFace 与 ArcFace 模型，实现精准的人脸检测与特征比对。
-
-**技术栈：** React、Electron、Spring Boot、MySQL、Ubuntu、DJL、RetinaFace、ArcFace、Jitsi
-
-### 区块链智能合约开发与应用系统
-
-项目围绕数字内容版权保护，构建基于区块链技术的去中心化注册与验证平台。通过 Solidity 编写并部署智能合约，实现链上资产确权与不可篡改记录存证。
-
-**技术栈：** Solidity、Ethereum、Web3、Linux、Docker
+本人现就职于一家专注于AI领域的出海SaaS公司，产品面向全球市场。专注于人工智能应用开发，重点研究大语言模型（LLM）在真实场景中的高效部署与系统集成。研究方向涵盖检索增强生成（RAG）、多智能体系统（Multi-Agent Systems）与多模态内容生成，聚焦于复杂任务中模型的知识调度、智能体协同决策以及多模态内容生成能力。
 
 ## 工作经历
 
 - **2025.05 - 至今** — 广州某SaaS公司 — Python工程师
-  偏AI应用开发工程师方向，重点研究大语言模型（LLM）在真实场景中的高效部署与系统集成，研究方向涵盖检索增强生成（RAG）、多智能体系统（Multi-Agent Systems）。
-
+  偏AI应用开发工程师方向，重点研究大语言模型（LLM）在真实场景中的高效部署与系统集成，研究方向涵盖检索增强生成（RAG）、多智能体系统（Multi-Agent Systems）等，目前主负责漫剧项目开发及公司后台管理系统开发。
 - **2024.10 - 2024.12** — 广东奇迹数产科技有限公司 — 后端开发工程师
   参与低代码平台 .NET 项目的后端开发，使用 C# 进行系统功能模块设计与实现。
-
 - **2023.05 - 2023.07** — 如祺出行（广州宸祺出行科技有限公司） — 客户端开发实习生
   主要学习 React、Vue、Node.js 相关技术栈，按时完成导师每周布置的开发任务。
 
@@ -80,3 +39,41 @@ title: About
 2025年6月，在专业257名学生中，以学业成绩和综合测评成绩双第一的优异表现，荣获"优秀毕业生"称号，并作为软件学院优秀毕业生代表、国家奖学金获得者登台领奖。在大学期间，累计获得三十余项校级、市级、省级及国家级技能竞赛奖项与荣誉称号。
 
 在实践方面，大三学年，通过了学校与宁波工程学院机器人学院联合开设的科技创新班在全校范围内的选拔。在暑期留校期间，担任科创班项目团队负责人，并取得了优异成绩，在大四前的暑假提前修满了大四学年的全部课程学分。
+
+## 在校研究项目
+
+### Py-Pose-Web：基于人体姿态估计算法的智能 Web 平台
+
+系统融合深度学习与前后端架构，基于 Ultralytics YOLOv8 实现人体骨骼关键点定位检测，并通过 Flask Blueprints 构建模块化后端接口。支持静态图像、动态视频及实时摄像头输入的姿态估计，在浏览器端实现可视化交互展示，适用于体育分析、人机交互等多种场景。
+
+**技术栈：** YOLOv8 Pose、Flask、Blueprints、JavaScript、OpenCV、Numpy、HTML/CSS、PostgreSQL
+
+**项目地址：** https://github.com/Eva-Dengyh/pyposeweb
+
+### Face-VectorDB-Login：基于向量数据库的人脸识别登录系统
+
+项目实现基于向量检索机制的人脸身份认证系统，采用 RetinaFace 和 ArcFace 构建高精度人脸检测与识别模型，结合 FAISS 高效索引库完成特征向量比对。系统支持人脸注册、验证与身份管理，后端利用 Flask 提供接口服务，前端通过 Electron + React 构建桌面应用，具备良好的交互体验与安全性保障。
+
+**技术栈：** RetinaFace、ArcFace、iResNet50、FAISS、Flask、Electron、React、Spring Boot、PostgreSQL
+
+**项目地址：** https://github.com/Eva-Dengyh/Face-VectorDB-Login
+
+### Label-Explorer：多源数据标注与可视化探索工具
+
+工具面向计算机视觉任务中的标注数据管理，专为 YOLO 格式设计的数据集分析平台。基于 Electron 构建跨平台桌面应用，支持原始图像、标签、类别及元数据文件的统一管理与可视化，为数据清洗、标注审核及模型训练准备提供完整支持。
+
+**技术栈：** Electron、Node.js、Python、Label Studio API
+
+**项目地址：** https://github.com/Eva-Dengyh/Label-Explorer
+
+### 基于深度学习的人脸视频会议签到系统
+
+系统集成视频通信与智能人脸识别功能，构建一套完整的视频会议出勤管理平台。前端采用 React + Electron 实现跨平台桌面应用，后端基于 Spring Boot 负责身份识别逻辑并接入 MySQL 数据库。通过 DJL 加载 RetinaFace 与 ArcFace 模型，实现精准的人脸检测与特征比对。
+
+**技术栈：** React、Electron、Spring Boot、MySQL、Ubuntu、DJL、RetinaFace、ArcFace、Jitsi
+
+### 区块链智能合约开发与应用系统
+
+项目围绕数字内容版权保护，构建基于区块链技术的去中心化注册与验证平台。通过 Solidity 编写并部署智能合约，实现链上资产确权与不可篡改记录存证。
+
+**技术栈：** Solidity、Ethereum、Web3、Linux、Docker
