@@ -1,5 +1,6 @@
 import { getDictionary } from "@/lib/dictionaries";
 import { getAllProjects } from "@/lib/projects";
+import { marked } from "marked";
 import siteConfig from "@/lib/config";
 
 export async function generateMetadata({ params }) {
@@ -69,9 +70,12 @@ export default async function ProjectsPage({ params }) {
                     </h3>
 
                     {project.description && (
-                      <p className="text-sm text-[--text-secondary] mt-1 leading-relaxed">
-                        {project.description}
-                      </p>
+                      <div
+                        className="post-content text-sm mt-1"
+                        dangerouslySetInnerHTML={{
+                          __html: marked(project.description),
+                        }}
+                      />
                     )}
 
                     {project.tech_stack && (

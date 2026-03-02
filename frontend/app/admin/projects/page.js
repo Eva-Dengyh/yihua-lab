@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { authHeaders } from "@/lib/auth";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -12,7 +12,6 @@ const EMPTY_FORM = {
   tech_stack: "",
   media_url: "",
   media_type: "image",
-  sort_order: 0,
 };
 
 export default function AdminProjectsPage() {
@@ -21,6 +20,8 @@ export default function AdminProjectsPage() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
 
   useEffect(() => {
     fetchProjects();
@@ -40,6 +41,41 @@ export default function AdminProjectsPage() {
     }
   }
 
+  function handleDragStart(index) {
+    dragItem.current = index;
+  }
+
+  function handleDragEnter(index) {
+    dragOverItem.current = index;
+  }
+
+  async function handleDragEnd() {
+    if (dragItem.current === null || dragOverItem.current === null) return;
+    if (dragItem.current === dragOverItem.current) return;
+
+    const reordered = [...projects];
+    const [removed] = reordered.splice(dragItem.current, 1);
+    reordered.splice(dragOverItem.current, 0, removed);
+
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    setProjects(reordered);
+
+    // 保存新排序到后端
+    const items = reordered.map((p, i) => ({ id: p.id, sort_order: i }));
+    try {
+      await fetch(`${API_BASE}/api/admin/projects/reorder`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ items }),
+      });
+    } catch {
+      setError("排序保存失败");
+      await fetchProjects();
+    }
+  }
+
   function openNew() {
     setForm(EMPTY_FORM);
     setEditing("new");
@@ -54,7 +90,6 @@ export default function AdminProjectsPage() {
       tech_stack: project.tech_stack || "",
       media_url: project.media_url || "",
       media_type: project.media_type || "image",
-      sort_order: project.sort_order ?? 0,
     });
     setEditing(project.id);
     setError("");
@@ -78,10 +113,7 @@ export default function AdminProjectsPage() {
       const res = await fetch(endpoint, {
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({
-          ...form,
-          sort_order: Number(form.sort_order) || 0,
-        }),
+        body: JSON.stringify(form),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -112,16 +144,40 @@ export default function AdminProjectsPage() {
     return <p className="p-8 text-gray-500">Loading...</p>;
   }
 
-  // 表单视图
+  // 表单视图 — 占满整个右侧
   if (editing !== null) {
     return (
-      <div className="p-8">
-        <div className="max-w-xl bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-xl font-semibold text-gray-800 mb-4">
+      <div className="h-full flex flex-col p-8">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-semibold text-gray-800">
             {editing === "new" ? "新建项目" : "编辑项目"}
           </h1>
-          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors text-sm"
+            >
+              取消
+            </button>
+            <button
+              form="project-form"
+              type="submit"
+              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors text-sm"
+            >
+              保存
+            </button>
+          </div>
+        </div>
+
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+        <form
+          id="project-form"
+          onSubmit={handleSubmit}
+          className="flex-1 flex flex-col gap-4 min-h-0"
+        >
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 项目名称 *
@@ -148,19 +204,6 @@ export default function AdminProjectsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                项目描述
-              </label>
-              <textarea
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
                 技术栈（逗号分隔）
               </label>
               <input
@@ -173,64 +216,52 @@ export default function AdminProjectsPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                图片/视频 URL
-              </label>
-              <input
-                type="url"
-                value={form.media_url}
-                onChange={(e) =>
-                  setForm({ ...form, media_url: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
-              />
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  图片/视频 URL
+                </label>
+                <input
+                  type="url"
+                  value={form.media_url}
+                  onChange={(e) =>
+                    setForm({ ...form, media_url: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+                />
+              </div>
+              <div className="w-24">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  类型
+                </label>
+                <select
+                  value={form.media_type}
+                  onChange={(e) =>
+                    setForm({ ...form, media_type: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
+                >
+                  <option value="image">图片</option>
+                  <option value="video">视频</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                媒体类型
-              </label>
-              <select
-                value={form.media_type}
-                onChange={(e) =>
-                  setForm({ ...form, media_type: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
-              >
-                <option value="image">图片</option>
-                <option value="video">视频</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                排序（数字越小越靠前）
-              </label>
-              <input
-                type="number"
-                value={form.sort_order}
-                onChange={(e) =>
-                  setForm({ ...form, sort_order: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-gray-500"
-              />
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
-              >
-                保存
-              </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
-              >
-                取消
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex-1 flex flex-col min-h-0">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              项目描述（支持 Markdown）
+            </label>
+            <textarea
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              placeholder={"## 项目简介\n\n描述你的项目...\n\n## 主要功能\n\n- 功能一\n- 功能二"}
+              className="flex-1 w-full px-4 py-3 border border-gray-300 rounded font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-gray-500"
+            />
+          </div>
+        </form>
       </div>
     );
   }
@@ -257,14 +288,12 @@ export default function AdminProjectsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-100">
               <tr>
+                <th className="w-10 px-2 py-3"></th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600">
                   名称
                 </th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 hidden sm:table-cell">
                   技术栈
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 w-16">
-                  排序
                 </th>
                 <th className="text-right px-4 py-3 font-medium text-gray-600 w-28">
                   操作
@@ -272,8 +301,33 @@ export default function AdminProjectsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {projects.map((project) => (
-                <tr key={project.id} className="hover:bg-gray-50">
+              {projects.map((project, index) => (
+                <tr
+                  key={project.id}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => e.preventDefault()}
+                  className="hover:bg-gray-50 cursor-grab active:cursor-grabbing"
+                >
+                  <td className="px-2 py-3 text-center text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="inline-block"
+                    >
+                      <circle cx="9" cy="6" r="1.5" />
+                      <circle cx="15" cy="6" r="1.5" />
+                      <circle cx="9" cy="12" r="1.5" />
+                      <circle cx="15" cy="12" r="1.5" />
+                      <circle cx="9" cy="18" r="1.5" />
+                      <circle cx="15" cy="18" r="1.5" />
+                    </svg>
+                  </td>
                   <td className="px-4 py-3">
                     <a
                       href={project.url}
@@ -286,9 +340,6 @@ export default function AdminProjectsPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">
                     {project.tech_stack || "-"}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {project.sort_order}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button

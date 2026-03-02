@@ -42,12 +42,16 @@ INSERT INTO nav_visibility (nav_key, visible) VALUES
 -- 项目展示表
 CREATE TABLE projects (
   id BIGSERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name JSONB NOT NULL DEFAULT '{"zh": "", "en": ""}',
   url VARCHAR(512) NOT NULL,
-  description TEXT,
+  description JSONB DEFAULT '{"zh": "", "en": ""}',
   tech_stack VARCHAR(512),
   media_url VARCHAR(512),
   media_type VARCHAR(10) DEFAULT 'image',
   sort_order INT DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
+
+-- 如果已有数据，用以下语句迁移：
+-- ALTER TABLE projects ALTER COLUMN name TYPE JSONB USING jsonb_build_object('zh', name, 'en', name);
+-- ALTER TABLE projects ALTER COLUMN description TYPE JSONB USING jsonb_build_object('zh', COALESCE(description, ''), 'en', COALESCE(description, ''));

@@ -24,15 +24,6 @@ def admin_list_projects():
     return jsonify(crud.get_all())
 
 
-@bp.get("/api/admin/projects/<int:project_id>")
-@require_admin
-def get_project(project_id):
-    item = crud.get_by_id(project_id)
-    if not item:
-        return jsonify({"error": "项目不存在"}), 404
-    return jsonify(item)
-
-
 @bp.post("/api/admin/projects")
 @require_admin
 def create_project():
@@ -47,6 +38,28 @@ def create_project():
     }
     item = crud.create(name=name, url=url, **optional)
     return jsonify(item), 201
+
+
+@bp.put("/api/admin/projects/reorder")
+@require_admin
+def reorder_projects():
+    """批量更新项目排序"""
+    data = request.get_json(silent=True) or {}
+    items = data.get("items", [])
+    if not items:
+        return jsonify({"error": "items 为必填项"}), 400
+    for item in items:
+        crud.update(item["id"], sort_order=item["sort_order"])
+    return jsonify(crud.get_all())
+
+
+@bp.get("/api/admin/projects/<int:project_id>")
+@require_admin
+def get_project(project_id):
+    item = crud.get_by_id(project_id)
+    if not item:
+        return jsonify({"error": "项目不存在"}), 404
+    return jsonify(item)
 
 
 @bp.put("/api/admin/projects/<int:project_id>")
