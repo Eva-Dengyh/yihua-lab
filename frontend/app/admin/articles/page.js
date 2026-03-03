@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { marked } from "marked";
 import { authHeaders } from "@/lib/auth";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -65,6 +66,31 @@ export default function AdminArticlesPage() {
   const [creatingCategory, setCreatingCategory] = useState(false);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const editorRef = useRef(null);
+  const previewRef = useRef(null);
+  const syncingRef = useRef(null); // 防止循环触发
+
+  const handleEditorScroll = useCallback(() => {
+    if (syncingRef.current === "preview") return;
+    syncingRef.current = "editor";
+    const editor = editorRef.current;
+    const preview = previewRef.current;
+    if (!editor || !preview) return;
+    const ratio = editor.scrollTop / (editor.scrollHeight - editor.clientHeight || 1);
+    preview.scrollTop = ratio * (preview.scrollHeight - preview.clientHeight);
+    syncingRef.current = null;
+  }, []);
+
+  const handlePreviewScroll = useCallback(() => {
+    if (syncingRef.current === "editor") return;
+    syncingRef.current = "preview";
+    const editor = editorRef.current;
+    const preview = previewRef.current;
+    if (!editor || !preview) return;
+    const ratio = preview.scrollTop / (preview.scrollHeight - preview.clientHeight || 1);
+    editor.scrollTop = ratio * (editor.scrollHeight - editor.clientHeight);
+    syncingRef.current = null;
+  }, []);
 
   useEffect(() => {
     fetchArticles();
@@ -456,24 +482,36 @@ export default function AdminArticlesPage() {
                 </button>
               ))}
             </div>
-            <textarea
-              value={form.content[contentLang] || ""}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  content: {
-                    ...form.content,
-                    [contentLang]: e.target.value,
-                  },
-                })
-              }
-              placeholder={
-                contentLang === "zh"
-                  ? "# 文章标题\n\n正文内容..."
-                  : "# Article Title\n\nContent here..."
-              }
-              className="flex-1 w-full px-4 py-3 border border-gray-300 rounded font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-gray-500"
-            />
+            <div className="flex-1 flex gap-3 min-h-0">
+              <textarea
+                ref={editorRef}
+                value={form.content[contentLang] || ""}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    content: {
+                      ...form.content,
+                      [contentLang]: e.target.value,
+                    },
+                  })
+                }
+                onScroll={handleEditorScroll}
+                placeholder={
+                  contentLang === "zh"
+                    ? "# 文章标题\n\n正文内容..."
+                    : "# Article Title\n\nContent here..."
+                }
+                className="flex-1 px-4 py-3 border border-gray-300 rounded font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-gray-500"
+              />
+              <div
+                ref={previewRef}
+                onScroll={handlePreviewScroll}
+                className="flex-1 px-4 py-3 border border-gray-200 rounded bg-white overflow-y-auto post-content admin-md-preview"
+                dangerouslySetInnerHTML={{
+                  __html: marked(form.content[contentLang] || "") || '<p style="color:#aaa;font-size:0.875rem">预览区域</p>',
+                }}
+              />
+            </div>
           </div>
         </form>
       </div>
@@ -482,7 +520,7 @@ export default function AdminArticlesPage() {
 
   // 列表视图
   return (
-    <div className="p-8">
+    <div className="p-8 h-full overflow-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold text-gray-800">文章管理</h1>
         <button

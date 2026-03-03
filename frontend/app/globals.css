@@ -488,6 +488,11 @@ a:hover {
   color: var(--post-link-hover);
 }
 
+/* ===== Admin MD Preview ===== */
+.admin-md-preview.post-content {
+  padding-top: 0;
+}
+
 /* ===== Responsive: Mobile ===== */
 @media screen and (max-width: 639px) {
   .main-content {

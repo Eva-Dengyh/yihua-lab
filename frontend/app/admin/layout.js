@@ -39,7 +39,7 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="h-screen overflow-hidden flex bg-gray-50">
       {/* 侧边栏 */}
       <aside className="w-56 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
         <div className="px-5 py-4 text-lg font-semibold text-gray-800 border-b border-gray-200">
