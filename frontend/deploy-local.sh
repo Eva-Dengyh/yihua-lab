@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 echo "=== [前端] 1/5 本地构建 ==="
 cd "${SCRIPT_DIR}"
 npm install
-npm run build
+NEXT_PUBLIC_API_URL=$(grep NEXT_PUBLIC_API_URL .env.production | cut -d= -f2) npm run build
 
 echo "=== [前端] 2/5 上传构建产物到服务器 ==="
 ssh ${SERVER} "mkdir -p ${REMOTE_TMP}"

@@ -192,13 +192,13 @@ export default function AdminImagesPage() {
       {images.length === 0 ? (
         <p className="text-gray-500 text-center py-12">暂无图片</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-3">
           {images.map((img) => (
             <div
               key={img.sha}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="h-54 bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img
                   src={img.cdn_url}
                   alt={img.name}
