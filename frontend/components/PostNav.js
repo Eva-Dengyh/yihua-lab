@@ -1,26 +1,38 @@
 import Link from "next/link";
 
 export default function PostNav({ prev, next, lang }) {
+  if (!prev && !next) return null;
+
   return (
-    <section className="post-nav py-4 overflow-hidden">
-      {prev && (
-        <Link
-          href={`/${lang}/posts/${encodeURIComponent(prev.slug)}`}
-          className="float-left font-semibold text-base transition-transform duration-300 hover:-translate-x-1"
-        >
-          <span className="mr-2 font-bold">&lt;</span>
-          {prev.title}
-        </Link>
-      )}
-      {next && (
-        <Link
-          href={`/${lang}/posts/${encodeURIComponent(next.slug)}`}
-          className="float-right font-semibold text-base transition-transform duration-300 hover:translate-x-1"
-        >
-          {next.title}
-          <span className="ml-2 font-bold">&gt;</span>
-        </Link>
-      )}
+    <section className="py-6 mt-2 border-t border-[--border]">
+      <div className="flex justify-between gap-4">
+        {prev ? (
+          <Link
+            href={`/${lang}/posts/${encodeURIComponent(prev.slug)}`}
+            className="group flex-1 min-w-0"
+          >
+            <span className="text-[10px] tracking-widest uppercase text-[--text-secondary] block mb-1">Prev</span>
+            <span className="text-sm font-medium transition-colors duration-300 group-hover:text-[--accent] flex items-center gap-1.5">
+              <span className="transition-transform duration-300 group-hover:-translate-x-1 inline-block">&larr;</span>
+              <span className="truncate">{prev.title}</span>
+            </span>
+          </Link>
+        ) : (
+          <div className="flex-1" />
+        )}
+        {next && (
+          <Link
+            href={`/${lang}/posts/${encodeURIComponent(next.slug)}`}
+            className="group flex-1 min-w-0 text-right"
+          >
+            <span className="text-[10px] tracking-widest uppercase text-[--text-secondary] block mb-1">Next</span>
+            <span className="text-sm font-medium transition-colors duration-300 group-hover:text-[--accent] flex items-center justify-end gap-1.5">
+              <span className="truncate">{next.title}</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1 inline-block">&rarr;</span>
+            </span>
+          </Link>
+        )}
+      </div>
     </section>
   );
 }

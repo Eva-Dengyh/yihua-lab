@@ -12,14 +12,13 @@ const LANG_LABELS = {
 export default function LangSwitch({ lang }) {
   const pathname = usePathname();
 
-  // 将当前路径中的语言前缀替换为目标语言
   const targetLang = locales.find((l) => l !== lang) || locales[0];
   const targetPath = pathname.replace(`/${lang}`, `/${targetLang}`);
 
   return (
     <Link
       href={targetPath}
-      className="ml-3 px-2 py-0.5 text-sm border border-[--border] rounded hover:text-[--link-hover] hover:border-[--link-hover] transition-colors"
+      className="px-2 py-0.5 text-xs border border-[--border] rounded-md text-[--text-secondary] hover:text-[--accent] hover:border-[--accent]/40 transition-all duration-300"
       title={targetLang === "zh" ? "切换到中文" : "Switch to English"}
     >
       {LANG_LABELS[targetLang]}

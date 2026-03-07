@@ -35,35 +35,45 @@ export default async function PostPage({ params }) {
 
       <article className="post-wrap relative w-full max-w-[780px] mx-auto pt-8 flex-1">
         <header>
-          <h1 className="text-3xl leading-relaxed font-semibold">{post.title}</h1>
+          <h1
+            className="text-3xl leading-relaxed font-semibold"
+            style={{ fontFamily: "'Crimson Pro', Georgia, serif", letterSpacing: "-0.02em" }}
+          >
+            {post.title}
+          </h1>
           {siteConfig.post_meta_enable && (
-            <div className="text-[rgba(85,85,85,0.53)] dark:text-[--text-secondary] text-sm mt-1">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[--text-secondary] mt-3 tracking-wide">
               {siteConfig.post_author_enable && siteConfig.author && (
-                <span>
-                  {dict.post.author}<a href={`/${lang}`} className="text-[--post-link] hover:text-[--post-link-hover]">{siteConfig.author}</a>
+                <span className="inline-flex items-center gap-1">
+                  <span className="opacity-50">by</span>
+                  <a href={`/${lang}`} className="text-[--accent] hover:text-[--post-link-hover] transition-colors">
+                    {siteConfig.author}
+                  </a>
                 </span>
               )}
               {post.date && siteConfig.post_date_enable && (
-                <span className="ml-4">
-                  {dict.post.date}<span>{formatDate(post.date, dict.months)}&nbsp;&nbsp;{formatTime(post.date)}</span>
+                <span className="tabular-nums">
+                  {formatDate(post.date, dict.months)}&nbsp;&nbsp;{formatTime(post.date)}
                 </span>
               )}
               {post.categories.length > 0 && siteConfig.post_category_enable && (
-                <span className="ml-4">
-                  {dict.post.category}
+                <span className="inline-flex items-center gap-1">
+                  <span className="opacity-50">in</span>
                   {post.categories.map((cat, i) => (
                     <a
                       key={cat}
                       href={`/${lang}/categories/${encodeURIComponent(cat)}`}
-                      className="text-[--post-link] hover:text-[--post-link-hover]"
+                      className="text-[--accent] hover:text-[--post-link-hover] transition-colors"
                     >
-                      {cat}{i < post.categories.length - 1 ? ", " : ""}
+                      {cat}{i < post.categories.length - 1 ? "," : ""}
                     </a>
                   ))}
                 </span>
               )}
             </div>
           )}
+          {/* 装饰线 */}
+          <div className="mt-6 mb-2 w-10 h-px bg-[--accent] opacity-40" />
         </header>
 
         <div
@@ -103,23 +113,26 @@ export default async function PostPage({ params }) {
           </section>
         )}
 
-        <section className="flex justify-between py-4">
-          <div>
-            <span>{dict.post.tags}</span>
-            {post.tags.length > 0 ? (
-              post.tags.map((tag, i) => (
-                <span key={tag}>
-                  <a href={`/${lang}/tags/${encodeURIComponent(tag)}`} className="text-[--post-link] hover:text-[--post-link-hover]">
-                    # {tag}
-                  </a>
-                  {i < post.tags.length - 1 ? " / " : ""}
-                </span>
-              ))
-            ) : null}
+        {/* 标签 */}
+        <section className="flex flex-wrap items-center justify-between gap-3 py-5">
+          <div className="flex flex-wrap gap-2">
+            {post.tags.length > 0 &&
+              post.tags.map((tag) => (
+                <a
+                  key={tag}
+                  href={`/${lang}/tags/${encodeURIComponent(tag)}`}
+                  className="inline-flex items-center px-2.5 py-0.5 text-xs rounded-full border border-[--border] text-[--text-secondary] hover:text-[--accent] hover:border-[--accent]/40 hover:bg-[--accent-soft] transition-all duration-300"
+                >
+                  # {tag}
+                </a>
+              ))}
           </div>
-          <div>
-            <a href={`/${lang}`} className="text-[--post-link] hover:text-[--post-link-hover]">{dict.post.home}</a>
-          </div>
+          <a
+            href={`/${lang}`}
+            className="text-xs text-[--text-secondary] hover:text-[--accent] transition-colors duration-300 tracking-wide"
+          >
+            {dict.post.home} &rarr;
+          </a>
         </section>
 
         <PostNav prev={prev} next={next} lang={lang} />
