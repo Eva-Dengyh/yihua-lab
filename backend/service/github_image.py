@@ -110,7 +110,8 @@ def list_images():
 
 def delete(filename, sha):
     """从 GitHub 删除指定图片"""
-    resp = httpx.delete(
+    resp = httpx.request(
+        "DELETE",
         _contents_url(filename),
         headers=_headers(),
         json={
