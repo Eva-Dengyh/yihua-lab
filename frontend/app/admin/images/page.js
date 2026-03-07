@@ -82,13 +82,27 @@ export default function AdminImagesPage() {
     }
   }
 
-  async function copyUrl(url) {
-    try {
-      await navigator.clipboard.writeText(url);
-      setSuccess("URL 已复制到剪贴板");
-      setTimeout(() => setSuccess(""), 2000);
-    } catch {
-      setError("复制失败");
+  function copyUrl(url) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(() => {
+        setSuccess("URL 已复制到剪贴板");
+        setTimeout(() => setSuccess(""), 2000);
+      }).catch(() => setError("复制失败"));
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = url;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        setSuccess("URL 已复制到剪贴板");
+        setTimeout(() => setSuccess(""), 2000);
+      } catch {
+        setError("复制失败");
+      }
+      document.body.removeChild(textarea);
     }
   }
 
