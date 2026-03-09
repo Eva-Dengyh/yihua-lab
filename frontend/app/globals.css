@@ -182,11 +182,9 @@ h1, h2, h3 {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -235,6 +233,86 @@ h1, h2, h3 {
 .theme-toggle-track.active .theme-toggle-thumb {
   left: calc(100% - 1px);
   transform: translateX(-100%);
+}
+
+/* ===== Reading Progress Bar ===== */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.reading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #e8a76c));
+  transform-origin: left;
+  transition: transform 0.15s linear;
+  will-change: transform;
+}
+
+/* ===== Post Header Divider ===== */
+.post-header-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border) 15%,
+    var(--accent) 50%,
+    var(--border) 85%,
+    transparent 100%
+  );
+  opacity: 0.6;
+}
+
+.post-header-divider::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* ===== Post End Mark ===== */
+.post-end-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3.5rem auto 0;
+  position: relative;
+}
+
+.post-end-mark::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border) 20%,
+    var(--border) 80%,
+    transparent 100%
+  );
+}
+
+/* ===== Post Navigation Cards ===== */
+.post-nav-card {
+  background: color-mix(in srgb, var(--card-bg) 50%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.post-nav-card:hover {
+  background: color-mix(in srgb, var(--card-bg) 80%, transparent);
 }
 
 /* ===== Post Content Typography ===== */
@@ -613,6 +691,38 @@ h1, h2, h3 {
 /* ===== Smooth Link Underline ===== */
 .post-wrap a {
   position: relative;
+}
+
+/* ===== Table of Contents ===== */
+.toc-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+
+.toc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.toc-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.toc-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ===== Post Title Drop Cap Feel ===== */
+.post-title {
+  text-wrap: balance;
+}
+
+/* ===== Dark Mode: Navigation Cards ===== */
+.dark .post-nav-card:hover {
+  box-shadow: 0 4px 20px rgba(232, 167, 108, 0.04);
+}
+
+.dark .post-header-divider {
+  opacity: 0.4;
 }
 
 /* ===== Responsive: Mobile ===== */
