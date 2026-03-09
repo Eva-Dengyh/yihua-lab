@@ -48,7 +48,7 @@ export default function Profile({ lang, dict }) {
             transition: "opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
-          <Link href={`/${lang}/posts`}>
+          <Link href={`/${lang}/about`}>
             <img
               src={siteConfig.avatar}
               alt="avatar"
