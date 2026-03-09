@@ -7,6 +7,7 @@ module.exports = {
       args: "start -p 3000",
       env: {
         NODE_ENV: "production",
+        API_INTERNAL_URL: "http://localhost:8000",
       },
     },
     {
